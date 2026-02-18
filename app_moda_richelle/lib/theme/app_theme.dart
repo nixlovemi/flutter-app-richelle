@@ -90,45 +90,55 @@ class AppTheme {
     fontWeight: FontWeight.w500,
     color: mediumGrey,
   );
+  
+  static const TextStyle whiteLabelText = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    color: white,
+  );
 
   // Button Styles
   static ButtonStyle primaryButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: primaryPink,
-    foregroundColor: white,
-    elevation: 4,
-    shadowColor: primaryPink.withValues(alpha: 0.4),
-    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+    backgroundColor: white,
+    foregroundColor: black,
+    elevation: 0,
+    shadowColor: Colors.transparent,
+    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(25),
+      borderRadius: BorderRadius.circular(15),
     ),
-    textStyle: buttonText,
+    textStyle: buttonText.copyWith(color: white),
   );
   
   static ButtonStyle secondaryButtonStyle = OutlinedButton.styleFrom(
-    foregroundColor: primaryPink,
-    side: const BorderSide(color: primaryPink, width: 2),
-    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+    backgroundColor: white,
+    foregroundColor: black,
+    side: const BorderSide(color: white, width: 2),
+    elevation: 0,
+    shadowColor: Colors.transparent,
+    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(25),
+      borderRadius: BorderRadius.circular(15),
     ),
-    textStyle: buttonText.copyWith(color: primaryPink),
+    textStyle: buttonText.copyWith(color: black),
   );
   
   static ButtonStyle socialButtonStyle = OutlinedButton.styleFrom(
     foregroundColor: darkGrey,
     backgroundColor: white,
     side: BorderSide(color: lightGrey, width: 1),
-    elevation: 2,
-    shadowColor: black.withValues(alpha: 0.1),
+    elevation: 0,
+    shadowColor: Colors.transparent,
     padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(15),
     ),
   );
 
   // Input Decoration
   static InputDecoration inputDecoration({
-    required String labelText,
+    String? labelText,
     String? hintText,
     Widget? prefixIcon,
     Widget? suffixIcon,
@@ -144,37 +154,89 @@ class AppTheme {
       fillColor: white,
       contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(15),
         borderSide: BorderSide(color: lightGrey, width: 1),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(15),
         borderSide: BorderSide(color: lightGrey, width: 1),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(15),
         borderSide: BorderSide(color: primaryPink, width: 2),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(15),
         borderSide: const BorderSide(color: Colors.red, width: 1),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(15),
         borderSide: const BorderSide(color: Colors.red, width: 2),
       ),
     );
   }
+  
+  // Input Decoration with shadow
+  static BoxDecoration inputShadowDecoration = BoxDecoration(
+    borderRadius: BorderRadius.circular(15),
+    boxShadow: [
+      BoxShadow(
+        color: black.withValues(alpha: 0.3),
+        blurRadius: 1,
+        offset: const Offset(0, 3),
+      ),
+    ],
+  );
+  
+  // Button Shadow Decoration
+  static BoxDecoration buttonShadowDecoration = BoxDecoration(
+    borderRadius: BorderRadius.circular(15),
+    boxShadow: [
+      BoxShadow(
+        color: black.withValues(alpha: 0.3),
+        blurRadius: 1,
+        offset: const Offset(0, 3),
+      ),
+    ],
+  );
+  
+  // Header Shadow Decoration
+  static BoxDecoration headerShadowDecoration = BoxDecoration(
+    boxShadow: [
+      BoxShadow(
+        color: black.withValues(alpha: 0.3),
+        blurRadius: 1,
+        offset: const Offset(0, 3),
+      ),
+    ],
+  );
+  
+  // Social Media Button Configuration
+  static const double socialButtonSize = 40;
+  static const double socialButtonBorderRadius = 15;
+  static const double socialButtonIconSize = 24;
+  
+  static BoxDecoration socialButtonDecoration = BoxDecoration(
+    color: white.withValues(alpha: 0.8),
+    borderRadius: BorderRadius.circular(socialButtonBorderRadius),
+    boxShadow: [
+      BoxShadow(
+        color: black.withValues(alpha: 0.3),
+        blurRadius: 1,
+        offset: const Offset(0, 3),
+      ),
+    ],
+  );
 
   // Card Style
   static BoxDecoration cardDecoration = BoxDecoration(
     color: white,
-    borderRadius: BorderRadius.circular(20),
+    borderRadius: BorderRadius.circular(15),
     boxShadow: [
       BoxShadow(
-        color: black.withValues(alpha: 0.08),
-        blurRadius: 20,
-        offset: const Offset(0, 8),
+        color: black.withValues(alpha: 0.3),
+        blurRadius: 1,
+        offset: const Offset(0, 3),
       ),
     ],
   );
@@ -258,15 +320,15 @@ class AppTheme {
         fillColor: white,
         contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(color: lightGrey, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(color: lightGrey, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(color: primaryPink, width: 2),
         ),
       ),
@@ -274,10 +336,10 @@ class AppTheme {
       // Card Theme
       cardTheme: CardThemeData(
         color: white,
-        elevation: 4,
-        shadowColor: black.withValues(alpha: 0.1),
+        elevation: 0,
+        shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(15),
         ),
       ),
     );

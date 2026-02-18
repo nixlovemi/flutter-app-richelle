@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'theme/app_theme.dart';
 import 'utils/alert_dialog_utils.dart';
 import 'translations/app_translations.dart';
-import 'widgets/language_picker.dart';
+// import 'widgets/language_picker.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -75,9 +75,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.black.withValues(alpha: 0.15),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
+                    color: AppTheme.black.withValues(alpha: 0.3),
+                    blurRadius: 1,
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
@@ -113,13 +113,14 @@ class _LoginPageState extends State<LoginPage> {
                               ],
                             ),
                           ),
-                          LanguageToggleButton(
+                          /* LanguageToggleButton(
                             onLanguageChanged: () {
                               setState(() {
                                 // Rebuild UI when language changes
                               });
                             },
                           ),
+                          */
                         ],
                       ),
                     ],
@@ -143,77 +144,104 @@ class _LoginPageState extends State<LoginPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           // Email Field
-                          TextFormField(
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            style: AppTheme.bodyLarge,
-                            decoration: AppTheme.inputDecoration(
-                              labelText: AppTranslations.email,
-                              hintText: AppTranslations.emailPlaceholder,
-                              prefixIcon: Icon(
-                                Icons.email_outlined,
-                                color: AppTheme.mediumGrey,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                AppTranslations.email,
+                                style: AppTheme.whiteLabelText,
                               ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return AppTranslations.get('emailRequired');
-                              }
-                              if (!value.contains('@')) {
-                                return AppTranslations.get('emailInvalid');
-                              }
-                              return null;
-                            },
+                              const SizedBox(height: 8),
+                              Container(
+                                decoration: AppTheme.inputShadowDecoration,
+                                child: TextFormField(
+                                  controller: _emailController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  style: AppTheme.bodyLarge,
+                                  decoration: AppTheme.inputDecoration(
+                                    hintText: AppTranslations.emailPlaceholder,
+                                    prefixIcon: Icon(
+                                      Icons.email_outlined,
+                                      color: AppTheme.mediumGrey,
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return AppTranslations.get('emailRequired');
+                                    }
+                                    if (!value.contains('@')) {
+                                      return AppTranslations.get('emailInvalid');
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 20),
 
                           // Password Field
-                          TextFormField(
-                            controller: _passwordController,
-                            obscureText: !_isPasswordVisible,
-                            style: AppTheme.bodyLarge,
-                            decoration: AppTheme.inputDecoration(
-                              labelText: AppTranslations.password,
-                              hintText: AppTranslations.passwordPlaceholder,
-                              prefixIcon: Icon(
-                                Icons.lock_outlined,
-                                color: AppTheme.mediumGrey,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                AppTranslations.password,
+                                style: AppTheme.whiteLabelText,
                               ),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _isPasswordVisible
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                  color: AppTheme.mediumGrey,
+                              const SizedBox(height: 8),
+                              Container(
+                                decoration: AppTheme.inputShadowDecoration,
+                                child: TextFormField(
+                                  controller: _passwordController,
+                                  obscureText: !_isPasswordVisible,
+                                  style: AppTheme.bodyLarge,
+                                  decoration: AppTheme.inputDecoration(
+                                    hintText: AppTranslations.passwordPlaceholder,
+                                    prefixIcon: Icon(
+                                      Icons.lock_outlined,
+                                      color: AppTheme.mediumGrey,
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _isPasswordVisible
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        color: AppTheme.mediumGrey,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isPasswordVisible = !_isPasswordVisible;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return AppTranslations.get('passwordRequired');
+                                    }
+                                    if (value.length < 6) {
+                                      return AppTranslations.get('passwordTooShort');
+                                    }
+                                    return null;
+                                  },
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    _isPasswordVisible = !_isPasswordVisible;
-                                  });
-                                },
                               ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return AppTranslations.get('passwordRequired');
-                              }
-                              if (value.length < 6) {
-                                return AppTranslations.get('passwordTooShort');
-                              }
-                              return null;
-                            },
+                            ],
                           ),
                           const SizedBox(height: 32),
 
                           // Login Button
-                          SizedBox(
+                          Container(
                             width: double.infinity,
+                            decoration: AppTheme.buttonShadowDecoration,
                             child: ElevatedButton(
                               onPressed: _handleLogin,
                               style: AppTheme.primaryButtonStyle,
                               child: Text(
                                 AppTranslations.login,
-                                style: AppTheme.buttonText,
+                                style: AppTheme.buttonText.copyWith(
+                                  color: AppTheme.black,
+                                ),
                               ),
                             ),
                           ),
@@ -247,50 +275,30 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         // Apple Login
                         Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: AppTheme.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppTheme.black.withValues(alpha: 0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
+                          width: AppTheme.socialButtonSize,
+                          height: AppTheme.socialButtonSize,
+                          decoration: AppTheme.socialButtonDecoration,
                           child: IconButton(
                             onPressed: _handleAppleLogin,
                             icon: Icon(
                               Icons.apple,
                               color: AppTheme.black,
-                              size: 32,
+                              size: AppTheme.socialButtonIconSize,
                             ),
                           ),
                         ),
 
                         // Google Login
                         Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: AppTheme.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppTheme.black.withValues(alpha: 0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
+                          width: AppTheme.socialButtonSize,
+                          height: AppTheme.socialButtonSize,
+                          decoration: AppTheme.socialButtonDecoration,
                           child: IconButton(
                             onPressed: _handleGoogleLogin,
                             icon: Text(
                               'G',
                               style: TextStyle(
-                                fontSize: 24,
+                                fontSize: AppTheme.socialButtonIconSize - 5,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.red[600],
                               ),
@@ -300,25 +308,15 @@ class _LoginPageState extends State<LoginPage> {
 
                         // Facebook Login
                         Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: AppTheme.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppTheme.black.withValues(alpha: 0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
+                          width: AppTheme.socialButtonSize,
+                          height: AppTheme.socialButtonSize,
+                          decoration: AppTheme.socialButtonDecoration,
                           child: IconButton(
                             onPressed: _handleFacebookLogin,
                             icon: Text(
                               'f',
                               style: TextStyle(
-                                fontSize: 32,
+                                fontSize: AppTheme.socialButtonIconSize - 5,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue[700],
                               ),
@@ -330,8 +328,9 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 40),
 
                     // Sign Up Button
-                    SizedBox(
+                    Container(
                       width: double.infinity,
+                      decoration: AppTheme.buttonShadowDecoration,
                       child: OutlinedButton(
                         onPressed: () => AlertDialogUtils.showSimpleAlert(
                           context: context,
@@ -342,7 +341,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: Text(
                           AppTranslations.signUp,
                           style: AppTheme.buttonText.copyWith(
-                            color: AppTheme.primaryPink,
+                            color: AppTheme.black,
                           ),
                         ),
                       ),
