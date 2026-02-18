@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'theme/app_theme.dart';
 import 'utils/alert_dialog_utils.dart';
 import 'translations/app_translations.dart';
+import 'pages/home_page.dart';
 // import 'widgets/language_picker.dart';
 
 class LoginPage extends StatefulWidget {
@@ -26,10 +27,10 @@ class _LoginPageState extends State<LoginPage> {
 
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
-      AlertDialogUtils.showSimpleAlert(
-        context: context,
-        title: AppTranslations.get('loginAction'),
-        message: '${AppTranslations.get('loginAttempted')}${_emailController.text}',
+      // Navigate to home page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     }
   }

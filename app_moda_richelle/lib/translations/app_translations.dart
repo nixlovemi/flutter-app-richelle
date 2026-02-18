@@ -70,6 +70,15 @@ class AppTranslations {
     'loading': 'Carregando...',
     'retry': 'Tentar novamente',
     'close': 'Fechar',
+    
+    // Home Page
+    'search': 'Buscar',
+    'home': 'Home',
+    'cart': 'Carrinho',
+    'favorites': 'Favoritos',
+    'profile': 'Perfil',
+    'homeContent': 'Área de Conteúdo Principal',
+    'logout': 'Sair',
   };
   
   // English translations
@@ -121,6 +130,15 @@ class AppTranslations {
     'loading': 'Loading...',
     'retry': 'Retry',
     'close': 'Close',
+    
+    // Home Page
+    'search': 'Search',
+    'home': 'Home',
+    'cart': 'Cart',
+    'favorites': 'Favorites',
+    'profile': 'Profile',
+    'homeContent': 'Home Content Area',
+    'logout': 'Logout',
   };
   
   // Helper methods for commonly used strings
