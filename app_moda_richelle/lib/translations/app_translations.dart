@@ -79,6 +79,18 @@ class AppTranslations {
     'profile': 'Perfil',
     'homeContent': 'Área de Conteúdo Principal',
     'logout': 'Sair',
+    
+    // Cart Page
+    'cartEmpty': 'Seu carrinho está vazio',
+    
+    // Favorites Page
+    'favoritesEmpty': 'Nenhum favorito ainda',
+    
+    // Profile Page
+    'editProfile': 'Editar Perfil',
+    'settings': 'Configurações',
+    'helpSupport': 'Ajuda e Suporte',
+    'logoutConfirm': 'Tem certeza que deseja sair?',
   };
   
   // English translations
@@ -139,6 +151,18 @@ class AppTranslations {
     'profile': 'Profile',
     'homeContent': 'Home Content Area',
     'logout': 'Logout',
+    
+    // Cart Page
+    'cartEmpty': 'Your shopping cart is empty',
+    
+    // Favorites Page
+    'favoritesEmpty': 'No favorites yet',
+    
+    // Profile Page
+    'editProfile': 'Edit Profile',
+    'settings': 'Settings',
+    'helpSupport': 'Help & Support',
+    'logoutConfirm': 'Are you sure you want to logout?',
   };
   
   // Helper methods for commonly used strings

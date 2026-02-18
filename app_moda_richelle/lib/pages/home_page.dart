@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../translations/app_translations.dart';
 import '../login_page.dart';
+import '../utils/alert_dialog_utils.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +18,295 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Widget _buildHomeContent() {
+    return Stack(
+      children: [
+        // Main background
+        Container(
+          width: double.infinity,
+          decoration: AppTheme.loginBodyGradientDecoration,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.home,
+                  size: 80,
+                  color: Colors.white.withValues(alpha: 0.8),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  AppTranslations.get('homeContent'),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+        
+        // Decorative bubble at bottom right (60% visible)
+        Positioned(
+          bottom: -60,
+          right: -60,
+          child: Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              color: AppTheme.white.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppTheme.white.withValues(alpha: 0.2),
+                width: 2,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCartContent() {
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          decoration: AppTheme.loginBodyGradientDecoration,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.shopping_cart,
+                  size: 80,
+                  color: Colors.white.withValues(alpha: 0.8),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  AppTranslations.get('cart'),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  AppTranslations.get('cartEmpty'),
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+        
+        // Decorative elements
+        Positioned(
+          top: 50,
+          left: -30,
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: AppTheme.white.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppTheme.white.withValues(alpha: 0.2),
+                width: 2,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFavoritesContent() {
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          decoration: AppTheme.loginBodyGradientDecoration,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.favorite,
+                  size: 80,
+                  color: Colors.white.withValues(alpha: 0.8),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  AppTranslations.get('favorites'),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  AppTranslations.get('favoritesEmpty'),
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+        
+        // Heart decorations
+        Positioned(
+          top: 80,
+          right: 30,
+          child: Icon(
+            Icons.favorite_border,
+            size: 60,
+            color: AppTheme.white.withValues(alpha: 0.2),
+          ),
+        ),
+        Positioned(
+          bottom: 120,
+          left: 40,
+          child: Icon(
+            Icons.favorite_border,
+            size: 40,
+            color: AppTheme.white.withValues(alpha: 0.2),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfileContent() {
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          decoration: AppTheme.loginBodyGradientDecoration,
+          child: Column(
+            children: [
+              const SizedBox(height: 60),
+              // Profile avatar
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: AppTheme.white.withValues(alpha: 0.2),
+                child: Icon(
+                  Icons.person,
+                  size: 60,
+                  color: Colors.white.withValues(alpha: 0.8),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                AppTranslations.get('profile'),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 40),
+              
+              // Profile options
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      _buildProfileOption(
+                        Icons.person_outline,
+                        AppTranslations.get('editProfile'),
+                        () {},
+                      ),
+                      const SizedBox(height: 15),
+                      _buildProfileOption(
+                        Icons.settings_outlined,
+                        AppTranslations.get('settings'),
+                        () {},
+                      ),
+                      const SizedBox(height: 15),
+                      _buildProfileOption(
+                        Icons.help_outline,
+                        AppTranslations.get('helpSupport'),
+                        () {},
+                      ),
+                      const SizedBox(height: 30),
+                      _buildProfileOption(
+                        Icons.logout,
+                        AppTranslations.get('logout'),
+                        () async {
+                          final result = await AlertDialogUtils.showConfirmationAlert(
+                            context: context,
+                            title: AppTranslations.get('logout'),
+                            message: 'Are you sure you want to logout?',
+                          );
+                          if (result == true && mounted) {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginPage()),
+                              (route) => false,
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfileOption(IconData icon, String title, VoidCallback onTap) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.white.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppTheme.white.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: ListTile(
+        leading: Icon(
+          icon,
+          color: Colors.white.withValues(alpha: 0.8),
+          size: 24,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.9),
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.white.withValues(alpha: 0.6),
+          size: 16,
+        ),
+        onTap: onTap,
+      ),
+    );
   }
 
   void _showMenu() {
@@ -54,23 +344,6 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 20),
               
-              // Profile option
-              ListTile(
-                leading: Icon(
-                  Icons.person_outline,
-                  color: AppTheme.primaryPink,
-                  size: 24,
-                ),
-                title: Text(
-                  AppTranslations.get('profile'),
-                  style: AppTheme.bodyLarge,
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  // TODO: Navigate to profile page
-                },
-              ),
-              
               // Logout option
               ListTile(
                 leading: Icon(
@@ -82,12 +355,20 @@ class _HomePageState extends State<HomePage> {
                   AppTranslations.get('logout'),
                   style: AppTheme.bodyLarge,
                 ),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  final result = await AlertDialogUtils.showConfirmationAlert(
+                    context: context,
+                    title: AppTranslations.get('logout'),
+                    message: AppTranslations.get('logoutConfirm'),
                   );
+                  if (result == true && mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                      (route) => false,
+                    );
+                  }
                 },
               ),
               
@@ -167,43 +448,15 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // Main content area (blank for now)
+          // Main content area - changes based on selected tab
           Expanded(
-            child: Stack(
+            child: IndexedStack(
+              index: _selectedIndex,
               children: [
-                // Main background
-                Container(
-                  width: double.infinity,
-                  decoration: AppTheme.loginBodyGradientDecoration,
-                  child: Center(
-                    child: Text(
-                      AppTranslations.get('homeContent'),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-                
-                // Decorative bubble at bottom right (60% visible)
-                Positioned(
-                  bottom: -60,
-                  right: -60,
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: AppTheme.white.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppTheme.white.withValues(alpha: 0.2),
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                ),
+                _buildHomeContent(),
+                _buildCartContent(),
+                _buildFavoritesContent(),
+                _buildProfileContent(),
               ],
             ),
           ),
