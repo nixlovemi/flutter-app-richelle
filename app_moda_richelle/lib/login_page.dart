@@ -228,7 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 40),
 
                           // Login Button
                           Container(
@@ -258,13 +258,13 @@ class _LoginPageState extends State<LoginPage> {
                               child: Text(
                                 AppTranslations.forgotPassword,
                                 style: AppTheme.bodyMedium.copyWith(
-                                  color: AppTheme.primaryPink,
+                                  color: AppTheme.white,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 50),
                         ],
                       ),
                     ),
@@ -325,7 +325,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 20),
 
                     // Sign Up Button
                     Container(

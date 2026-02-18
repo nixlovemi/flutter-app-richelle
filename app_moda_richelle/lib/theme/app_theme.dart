@@ -217,7 +217,7 @@ class AppTheme {
   static const double socialButtonIconSize = 24;
   
   static BoxDecoration socialButtonDecoration = BoxDecoration(
-    color: white.withValues(alpha: 0.8),
+    color: white,
     borderRadius: BorderRadius.circular(socialButtonBorderRadius),
     boxShadow: [
       BoxShadow(
