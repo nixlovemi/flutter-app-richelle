@@ -49,6 +49,7 @@ class AppTranslations {
     
     // Alert Titles
     'loginAction': 'Login Realizado',
+    'loginFailed': 'Falha no Login',
     'socialLogin': 'Login Social',
     'passwordRecovery': 'Recuperação de Senha',
     'registration': 'Cadastro',
@@ -91,6 +92,15 @@ class AppTranslations {
     'settings': 'Configurações',
     'helpSupport': 'Ajuda e Suporte',
     'logoutConfirm': 'Tem certeza que deseja sair?',
+    
+    // API and Network Error Messages
+    'noInternetConnection': 'Sem conexão com a internet. Verifique sua conexão e tente novamente.',
+    'serverError': 'Erro no servidor. Tente novamente mais tarde.',
+    'networkError': 'Erro de rede:',
+    'parseError': 'Falha ao processar resposta:',
+    'unexpectedError': 'Ocorreu um erro inesperado. Tente novamente.',
+    'userNotAuthenticated': 'Usuário não autenticado',
+    'requestFailed': 'Solicitação falhou com status:',
   };
   
   // English translations
@@ -121,6 +131,7 @@ class AppTranslations {
     
     // Alert Titles
     'loginAction': 'Login Action',
+    'loginFailed': 'Login Failed',
     'socialLogin': 'Social Login',
     'passwordRecovery': 'Password Recovery',
     'registration': 'Registration',
@@ -163,6 +174,15 @@ class AppTranslations {
     'settings': 'Settings',
     'helpSupport': 'Help & Support',
     'logoutConfirm': 'Are you sure you want to logout?',
+    
+    // API and Network Error Messages
+    'noInternetConnection': 'No internet connection. Please check your connection and try again.',
+    'serverError': 'Server error. Please try again later.',
+    'networkError': 'Network error:',
+    'parseError': 'Failed to parse response:',
+    'unexpectedError': 'An unexpected error occurred. Please try again.',
+    'userNotAuthenticated': 'User not authenticated',
+    'requestFailed': 'Request failed with status:',
   };
   
   // Helper methods for commonly used strings

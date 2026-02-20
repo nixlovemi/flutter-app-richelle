@@ -3,6 +3,7 @@ import 'theme/app_theme.dart';
 import 'utils/alert_dialog_utils.dart';
 import 'translations/app_translations.dart';
 import 'pages/home_page.dart';
+import 'services/auth_service.dart';
 // import 'widgets/language_picker.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,7 +17,15 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _authService = AuthService();
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto-login check is now handled in main.dart AuthWrapper
+  }
 
   @override
   void dispose() {
@@ -25,13 +34,65 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _handleLogin() {
+  void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      // Navigate to home page
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        final response = await _authService.login(
+          _emailController.text.trim(),
+          _passwordController.text,
+        );
+
+        if (response.isSuccess) {
+          // Login successful - navigate to home page
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          }
+        } else {
+          // Login failed - show error message
+          if (mounted) {
+            String errorMessage = response.error?.message ?? AppTranslations.get('loginFailed');
+            
+            // Check for specific field errors
+            if (response.error?.errors != null) {
+              final emailError = response.error!.getFieldError('email');
+              final passwordError = response.error!.getFieldError('password');
+              
+              if (emailError != null) {
+                errorMessage = emailError;
+              } else if (passwordError != null) {errorMessage = passwordError; }
+              else { errorMessage = response.error!.allMessages;} 
+            }
+
+            AlertDialogUtils.showSimpleAlert(
+              context: context,
+              title: AppTranslations.get('loginFailed'),
+              message: errorMessage,
+            );
+          }
+        }
+      } catch (e) {
+        // Handle unexpected errors
+        if (mounted) {
+          AlertDialogUtils.showSimpleAlert(
+            context: context,
+            title: AppTranslations.get('error'),
+            message: AppTranslations.get('unexpectedError'),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     }
   }
 
@@ -236,14 +297,25 @@ class _LoginPageState extends State<LoginPage> {
                             width: double.infinity,
                             decoration: AppTheme.buttonShadowDecoration,
                             child: ElevatedButton(
-                              onPressed: _handleLogin,
+                              onPressed: _isLoading ? null : _handleLogin,
                               style: AppTheme.primaryButtonStyle,
-                              child: Text(
-                                AppTranslations.login,
-                                style: AppTheme.buttonText.copyWith(
-                                  color: AppTheme.black,
-                                ),
-                              ),
+                              child: _isLoading
+                                  ? SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                          AppTheme.black,
+                                        ),
+                                      ),
+                                    )
+                                  : Text(
+                                      AppTranslations.login,
+                                      style: AppTheme.buttonText.copyWith(
+                                        color: AppTheme.black,
+                                      ),
+                                    ),
                             ),
                           ),
                           const SizedBox(height: 16),

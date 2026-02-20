@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'login_page.dart';
+import 'pages/home_page.dart';
+import 'services/auth_service.dart';
 import 'theme/app_theme.dart';
 
 void main() {
@@ -19,15 +21,69 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Moda Richelle',
       debugShowCheckedModeBanner: false, // Security: Hide debug banner in production
       theme: AppTheme.themeData,
-      home: const LoginPage(),
+      home: const AuthWrapper(),
     );
+  }
+}
+
+/// Wrapper that checks authentication status and shows appropriate page
+class AuthWrapper extends StatefulWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  State<AuthWrapper> createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends State<AuthWrapper> {
+  final _authService = AuthService();
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthStatus();
+  }
+
+  Future<void> _checkAuthStatus() async {
+    try {
+      // Initialize authentication and check for stored tokens
+      await _authService.initializeAuth();
+    } catch (e) {
+      // If there's an error, proceed to login page
+      debugPrint('Auth initialization error: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      // Show loading screen while checking authentication
+      return Scaffold(
+        body: Container(
+          decoration: AppTheme.loginBodyGradientDecoration,
+          child: const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Show appropriate page based on authentication status
+    return _authService.isAuthenticated ? const HomePage() : const LoginPage();
   }
 }
 
