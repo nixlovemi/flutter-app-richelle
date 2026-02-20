@@ -7,7 +7,9 @@ import 'services/auth_service.dart';
 // import 'widgets/language_picker.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final AuthService authService;
+  
+  const LoginPage({super.key, required this.authService});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -17,7 +19,6 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
 
@@ -41,18 +42,26 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       try {
-        final response = await _authService.login(
+        final response = await widget.authService.login(
           _emailController.text.trim(),
           _passwordController.text,
         );
 
         if (response.isSuccess) {
-          // Login successful - navigate to home page
+          // Login successful - check if we can go back or need to navigate to home
           if (mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
-            );
+            if (Navigator.canPop(context)) {
+              // We came from somewhere (like profile tab), go back with success result
+              Navigator.pop(context, true); // Return true to indicate successful login
+            } else {
+              // This is the main entry point, navigate to home  
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage(
+                  authService: widget.authService, // Use the same instance passed from main
+                )),
+              );
+            }
           }
         } else {
           // Login failed - show error message
@@ -154,6 +163,25 @@ class _LoginPageState extends State<LoginPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Back button - only show if we can go back
+                          if (Navigator.canPop(context))
+                            Container(
+                              margin: const EdgeInsets.only(top: 5),
+                              child: IconButton(
+                                onPressed: () => Navigator.pop(context),
+                                icon: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: AppTheme.deepRose,
+                                  size: 24,
+                                ),
+                                tooltip: AppTranslations.get('goBack'),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(
+                                  minWidth: 40,
+                                  minHeight: 40,
+                                ),
+                              ),
+                            ),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

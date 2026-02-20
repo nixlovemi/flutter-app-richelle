@@ -101,6 +101,18 @@ class AppTranslations {
     'unexpectedError': 'Ocorreu um erro inesperado. Tente novamente.',
     'userNotAuthenticated': 'Usuário não autenticado',
     'requestFailed': 'Solicitação falhou com status:',
+    'loginToAccess': 'Faça login para acessar recursos exclusivos',
+    'createAccount': 'Criar nova conta',
+    'registerComingSoon': 'Registro em breve!',
+    'logoutConfirmation': 'Tem certeza de que deseja sair?',
+    'goBack': 'Voltar',
+    'changePassword': 'Alterar senha',
+    'deleteAccount': 'Excluir conta',
+    'notifications': 'Notificações',
+    'language': 'Idioma',
+    'about': 'Sobre',
+    'privacyPolicy': 'Política de privacidade',
+    'version': 'Versão',
   };
   
   // English translations
@@ -177,12 +189,22 @@ class AppTranslations {
     
     // API and Network Error Messages
     'noInternetConnection': 'No internet connection. Please check your connection and try again.',
-    'serverError': 'Server error. Please try again later.',
-    'networkError': 'Network error:',
     'parseError': 'Failed to parse response:',
     'unexpectedError': 'An unexpected error occurred. Please try again.',
     'userNotAuthenticated': 'User not authenticated',
     'requestFailed': 'Request failed with status:',
+    'loginToAccess': 'Login to access exclusive features',
+    'createAccount': 'Create new account',
+    'registerComingSoon': 'Registration coming soon!',
+    'logoutConfirmation': 'Are you sure you want to logout?',
+    'goBack': 'Go back',
+    'changePassword': 'Change password',
+    'deleteAccount': 'Delete account',
+    'notifications': 'Notifications',
+    'language': 'Language',
+    'about': 'About',
+    'privacyPolicy': 'Privacy policy',
+    'version': 'Version',
   };
   
   // Helper methods for commonly used strings

@@ -3,9 +3,13 @@ import '../theme/app_theme.dart';
 import '../translations/app_translations.dart';
 import '../login_page.dart';
 import '../utils/alert_dialog_utils.dart';
+import '../services/auth_service.dart';
+import 'settings_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final AuthService authService;
+  
+  const HomePage({super.key, required this.authService});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -193,6 +197,117 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildProfileContent() {
+    // Check if user is authenticated
+    if (!widget.authService.isAuthenticated) {
+      // Show login form in profile tab
+      return _buildProfileLoginContent();
+    }
+    
+    // Show authenticated user profile options
+    return _buildAuthenticatedProfileContent();
+  }
+  
+  Widget _buildProfileLoginContent() {
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          decoration: AppTheme.loginBodyGradientDecoration,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: AppTheme.white.withValues(alpha: 0.2),
+                  child: Icon(
+                    Icons.person_outline,
+                    size: 60,
+                    color: Colors.white.withValues(alpha: 0.8),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  AppTranslations.get('profile'),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  AppTranslations.get('loginToAccess'),
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 30),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 40),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => LoginPage(authService: widget.authService),
+                        ),
+                      ).then((loginSuccessful) {
+                        // Refresh the profile tab only if login was successful
+                        if (loginSuccessful == true) {
+                          setState(() {});
+                        }
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppTheme.primaryPink,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    child: Text(
+                      AppTranslations.get('login'),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                TextButton(
+                  onPressed: () {
+                    // TODO: Navigate to registration page
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(AppTranslations.get('registerComingSoon')),
+                        backgroundColor: AppTheme.primaryPink,
+                      ),
+                    );
+                  },
+                  child: Text(
+                    AppTranslations.get('createAccount'),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildAuthenticatedProfileContent() {
     return Stack(
       children: [
         Container(
@@ -231,13 +346,27 @@ class _HomePageState extends State<HomePage> {
                       _buildProfileOption(
                         Icons.person_outline,
                         AppTranslations.get('editProfile'),
-                        () {},
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileEditPage(authService: widget.authService),
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 15),
                       _buildProfileOption(
                         Icons.settings_outlined,
                         AppTranslations.get('settings'),
-                        () {},
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SettingsPage(authService: widget.authService),
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 15),
                       _buildProfileOption(
@@ -253,14 +382,12 @@ class _HomePageState extends State<HomePage> {
                           final result = await AlertDialogUtils.showConfirmationAlert(
                             context: context,
                             title: AppTranslations.get('logout'),
-                            message: 'Are you sure you want to logout?',
+                            message: AppTranslations.get('logoutConfirmation'),
                           );
                           if (result == true && mounted) {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(builder: (context) => const LoginPage()),
-                              (route) => false,
-                            );
+                            await widget.authService.logout();
+                            // Refresh the profile tab to show login form
+                            setState(() {});
                           }
                         },
                       ),
@@ -344,33 +471,59 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 20),
               
-              // Logout option
-              ListTile(
-                leading: Icon(
-                  Icons.logout,
-                  color: AppTheme.primaryPink,
-                  size: 24,
-                ),
-                title: Text(
-                  AppTranslations.get('logout'),
-                  style: AppTheme.bodyLarge,
-                ),
-                onTap: () async {
-                  Navigator.pop(context);
-                  final result = await AlertDialogUtils.showConfirmationAlert(
-                    context: context,
-                    title: AppTranslations.get('logout'),
-                    message: AppTranslations.get('logoutConfirm'),
-                  );
-                  if (result == true && mounted) {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LoginPage()),
-                      (route) => false,
+              // Show logout option only if user is authenticated
+              if (widget.authService.isAuthenticated)
+                ListTile(
+                  leading: Icon(
+                    Icons.logout,
+                    color: AppTheme.primaryPink,
+                    size: 24,
+                  ),
+                  title: Text(
+                    AppTranslations.get('logout'),
+                    style: AppTheme.bodyLarge,
+                  ),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    final result = await AlertDialogUtils.showConfirmationAlert(
+                      context: context,
+                      title: AppTranslations.get('logout'),
+                      message: AppTranslations.get('logoutConfirmation'),
                     );
-                  }
-                },
-              ),
+                    if (result == true && mounted) {
+                      await widget.authService.logout();
+                      // Refresh the profile tab to show login form
+                      setState(() {});
+                    }
+                  },
+                ),
+              
+              // Show login option if user is not authenticated
+              if (!widget.authService.isAuthenticated)
+                ListTile(
+                  leading: Icon(
+                    Icons.login,
+                    color: AppTheme.primaryPink,
+                    size: 24,
+                  ),
+                  title: Text(
+                    AppTranslations.get('login'),
+                    style: AppTheme.bodyLarge,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => LoginPage(authService: widget.authService),
+                      ),
+                    ).then((loginSuccessful) {
+                      // Refresh after returning from login only if successful
+                      if (loginSuccessful == true) {
+                        setState(() {});
+                      }
+                    });
+                  },
+                ),
               
               const SizedBox(height: 20),
             ],

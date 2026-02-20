@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'login_page.dart';
 import 'pages/home_page.dart';
 import 'services/auth_service.dart';
 import 'theme/app_theme.dart';
@@ -27,35 +26,35 @@ class MyApp extends StatelessWidget {
       title: 'Moda Richelle',
       debugShowCheckedModeBanner: false, // Security: Hide debug banner in production
       theme: AppTheme.themeData,
-      home: const AuthWrapper(),
+      home: const AppWrapper(),
     );
   }
 }
 
-/// Wrapper that checks authentication status and shows appropriate page
-class AuthWrapper extends StatefulWidget {
-  const AuthWrapper({super.key});
+/// Wrapper that initializes services and shows the main app
+class AppWrapper extends StatefulWidget {
+  const AppWrapper({super.key});
 
   @override
-  State<AuthWrapper> createState() => _AuthWrapperState();
+  State<AppWrapper> createState() => _AppWrapperState();
 }
 
-class _AuthWrapperState extends State<AuthWrapper> {
+class _AppWrapperState extends State<AppWrapper> {
   final _authService = AuthService();
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _checkAuthStatus();
+    _initializeServices();
   }
 
-  Future<void> _checkAuthStatus() async {
+  Future<void> _initializeServices() async {
     try {
-      // Initialize authentication and check for stored tokens
+      // Initialize authentication service (for background token check)
       await _authService.initializeAuth();
     } catch (e) {
-      // If there's an error, proceed to login page
+      // If there's an error, proceed anyway - auth is not required for public content
       debugPrint('Auth initialization error: $e');
     } finally {
       if (mounted) {
@@ -69,7 +68,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      // Show loading screen while checking authentication
+      // Show loading screen while initializing services
       return Scaffold(
         body: Container(
           decoration: AppTheme.loginBodyGradientDecoration,
@@ -82,8 +81,8 @@ class _AuthWrapperState extends State<AuthWrapper> {
       );
     }
 
-    // Show appropriate page based on authentication status
-    return _authService.isAuthenticated ? const HomePage() : const LoginPage();
+    // Always show the main app with tabs - authentication handled in Profile tab
+    return HomePage(authService: _authService);
   }
 }
 
