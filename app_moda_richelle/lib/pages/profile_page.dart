@@ -136,8 +136,9 @@ class _ProfilePageState extends State<ProfilePage> {
             Text(
               user.email,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
+                color: Colors.grey.withValues(alpha: 0.6),
                 fontSize: 16,
+                fontStyle: FontStyle.italic,
               ),
             ),
           ],
@@ -158,7 +159,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         MaterialPageRoute(
                           builder: (context) => ProfileEditPage(authService: widget.authService),
                         ),
-                      );
+                      ).then((result) {
+                        // Refresh the profile page if profile was updated
+                        if (result == true) {
+                          setState(() {});
+                        }
+                      });
                     },
                   ),
                   const SizedBox(height: 15),

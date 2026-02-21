@@ -43,6 +43,9 @@ dependencies:
   
   # Secure storage for authentication tokens
   flutter_secure_storage: ^9.2.2
+  
+  # Shared preferences for web platform
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

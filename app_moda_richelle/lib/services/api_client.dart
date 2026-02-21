@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../config/api_config.dart';
 import '../models/api_response.dart';
 import '../models/api_error.dart';
 import '../models/api_wrapper.dart';
@@ -10,14 +12,17 @@ import 'token_storage_service.dart';
 /// Main API client for handling HTTP requests to the Laravel backend
 /// Uses singleton pattern to ensure consistent authentication across the app
 class ApiClient {
-  static const String _baseUrl = 'http://127.0.0.1:8000';
-  static const String _apiPrefix = '/api/v1';
-  static const Duration _timeout = Duration(seconds: 30);
+  static const Duration _timeout = ApiConfig.requestTimeout;
 
   // Singleton pattern
   static final ApiClient _instance = ApiClient._internal();
   factory ApiClient() => _instance;
-  ApiClient._internal();
+  ApiClient._internal() {
+    // Log environment info when ApiClient is created
+    if (kDebugMode) {
+      print('🌐 ApiClient: ${ApiConfig.environmentInfo}');
+    }
+  }
 
   String? _authToken;
 
@@ -25,7 +30,16 @@ class ApiClient {
   static ApiClient get instance => _instance;
 
   /// Get the full API URL
-  String get baseApiUrl => '$_baseUrl$_apiPrefix';
+  String get baseApiUrl => ApiConfig.fullApiUrl;
+
+  /// Get current environment info (useful for debugging)
+  static String get environmentInfo => ApiConfig.environmentInfo;
+
+  /// Check if running in production mode
+  static bool get isProduction => ApiConfig.isProduction;
+
+  /// Check if running in development mode  
+  static bool get isDevelopment => ApiConfig.isDevelopment;
 
   /// Set the authentication token
   void setAuthToken(String? token) {
@@ -67,7 +81,7 @@ class ApiClient {
     final headers = <String, String>{
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'API_KEY': 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
+      'API_KEY': ApiConfig.apiKey,
     };
 
     if (includeAuth && _authToken != null) {
@@ -84,7 +98,7 @@ class ApiClient {
     return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'API_KEY': 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
+      'API_KEY': ApiConfig.apiKey,
       if (includeAuth && token != null) 'Authorization': 'Bearer $token',
     };
   }
@@ -94,7 +108,7 @@ class ApiClient {
     return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'API_KEY': 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
+      'API_KEY': ApiConfig.apiKey,
     };
   }
 

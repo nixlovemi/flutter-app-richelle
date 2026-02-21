@@ -35,11 +35,11 @@ class _SettingsPageState extends State<SettingsPage> {
         padding: const EdgeInsets.all(16),
         children: [
           // Account Section
-          _buildSectionHeader('Account'),
+          _buildSectionHeader(AppTranslations.get('account')),
           _buildSettingsTile(
             icon: Icons.person_outline,
             title: AppTranslations.get('editProfile'),
-            subtitle: 'Update your personal information',
+            subtitle: AppTranslations.get('updatePersonalInfo'),
             onTap: () {
               Navigator.push(
                 context,
@@ -51,8 +51,8 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           _buildSettingsTile(
             icon: Icons.security,
-            title: 'Change Password',
-            subtitle: 'Update your account password',
+            title: AppTranslations.get('changePassword'),
+            subtitle: AppTranslations.get('updateAccountPassword'),
             onTap: () {
               // Navigate to change password page
             },
@@ -61,11 +61,11 @@ class _SettingsPageState extends State<SettingsPage> {
           const SizedBox(height: 20),
           
           // Preferences Section
-          _buildSectionHeader('Preferences'),
+          _buildSectionHeader(AppTranslations.get('preferences')),
           _buildSwitchTile(
             icon: Icons.notifications_outlined,
-            title: 'Notifications',
-            subtitle: 'Receive push notifications',
+            title: AppTranslations.get('notifications'),
+            subtitle: AppTranslations.get('receivePushNotifications'),
             value: _notificationsEnabled,
             onChanged: (value) {
               setState(() {
@@ -75,8 +75,8 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           _buildSwitchTile(
             icon: Icons.dark_mode_outlined,
-            title: 'Dark Mode',
-            subtitle: 'Switch to dark theme',
+            title: AppTranslations.get('darkMode'),
+            subtitle: AppTranslations.get('switchToDarkTheme'),
             value: _darkModeEnabled,
             onChanged: (value) {
               setState(() {
@@ -86,7 +86,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           _buildSettingsTile(
             icon: Icons.language,
-            title: 'Language',
+            title: AppTranslations.get('language'),
             subtitle: _selectedLanguage,
             onTap: () {
               _showLanguageDialog();
@@ -96,27 +96,27 @@ class _SettingsPageState extends State<SettingsPage> {
           const SizedBox(height: 20),
           
           // About Section
-          _buildSectionHeader('About'),
+          _buildSectionHeader(AppTranslations.get('about')),
           _buildSettingsTile(
             icon: Icons.help_outline,
             title: AppTranslations.get('helpSupport'),
-            subtitle: 'Get help and contact support',
+            subtitle: AppTranslations.get('getHelpAndSupport'),
             onTap: () {
               // Navigate to help page
             },
           ),
           _buildSettingsTile(
             icon: Icons.info_outline,
-            title: 'About App',
-            subtitle: 'Version 1.0.0',
+            title: AppTranslations.get('aboutApp'),
+            subtitle: AppTranslations.get('version100'),
             onTap: () {
               _showAboutDialog();
             },
           ),
           _buildSettingsTile(
             icon: Icons.privacy_tip_outlined,
-            title: 'Privacy Policy',
-            subtitle: 'Read our privacy policy',
+            title: AppTranslations.get('privacyPolicy'),
+            subtitle: AppTranslations.get('readPrivacyPolicy'),
             onTap: () {
               // Navigate to privacy policy
             },
@@ -282,12 +282,12 @@ class _SettingsPageState extends State<SettingsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Select Language'),
+        title: Text(AppTranslations.get('selectLanguage')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             RadioListTile<String>(
-              title: Text('English'),
+              title: Text(AppTranslations.get('english')),
               value: 'English',
               groupValue: _selectedLanguage,
               onChanged: (value) {
@@ -298,7 +298,7 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
             RadioListTile<String>(
-              title: Text('Português'),
+              title: Text(AppTranslations.get('portuguese')),
               value: 'Português',
               groupValue: _selectedLanguage,
               onChanged: (value) {
@@ -317,7 +317,7 @@ class _SettingsPageState extends State<SettingsPage> {
   void _showAboutDialog() {
     showAboutDialog(
       context: context,
-      applicationName: 'Moda Richelle',
+      applicationName: AppTranslations.get('appName'),
       applicationVersion: '1.0.0',
       applicationIcon: Icon(
         Icons.shopping_bag,
@@ -325,9 +325,9 @@ class _SettingsPageState extends State<SettingsPage> {
         size: 48,
       ),
       children: [
-        Text('A modern fashion shopping app built with Flutter.'),
+        Text(AppTranslations.get('appDescription')),
         SizedBox(height: 16),
-        Text('© 2026 Moda Richelle. All rights reserved.'),
+        Text(AppTranslations.get('copyright')),
       ],
     );
   }
@@ -341,14 +341,14 @@ class _SettingsPageState extends State<SettingsPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+            child: Text(AppTranslations.get('cancel')),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red.shade400,
             ),
-            child: Text('Logout'),
+            child: Text(AppTranslations.get('logout')),
           ),
         ],
       ),
@@ -368,9 +368,9 @@ class ProfileEditPage extends StatefulWidget {
 
 class _ProfileEditPageState extends State<ProfileEditPage> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
   bool _isLoading = false;
 
   @override
@@ -382,9 +382,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   void _loadUserData() {
     if (widget.authService.currentUser != null) {
       final user = widget.authService.currentUser!;
-      _nameController.text = '${user.firstName} ${user.lastName}';
+      _firstNameController.text = user.firstName;
+      _lastNameController.text = user.lastName;
       _emailController.text = user.email;
-      // Phone would come from user data if available
     }
   }
 
@@ -399,7 +399,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           TextButton(
             onPressed: _isLoading ? null : _saveProfile,
             child: Text(
-              'Save',
+              AppTranslations.get('save'),
               style: TextStyle(
                 color: _isLoading ? AppTheme.mediumGrey : AppTheme.deepRose,
                 fontWeight: FontWeight.bold,
@@ -463,14 +463,30 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             
             // Form Fields
             TextFormField(
-              controller: _nameController,
+              controller: _firstNameController,
               decoration: AppTheme.inputDecoration(
-                hintText: 'Full Name',
+                hintText: AppTranslations.get('firstName'),
                 prefixIcon: const Icon(Icons.person_outline),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Please enter your name';
+                  return AppTranslations.get('pleaseEnterFirstName');
+                }
+                return null;
+              },
+            ),
+            
+            const SizedBox(height: 16),
+            
+            TextFormField(
+              controller: _lastNameController,
+              decoration: AppTheme.inputDecoration(
+                hintText: AppTranslations.get('lastName'),
+                prefixIcon: const Icon(Icons.person_outline),
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return AppTranslations.get('pleaseEnterLastName');
                 }
                 return null;
               },
@@ -480,31 +496,19 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             
             TextFormField(
               controller: _emailController,
+              enabled: false, // Make email field disabled/read-only
               decoration: AppTheme.inputDecoration(
-                hintText: 'Email',
+                hintText: AppTranslations.get('email'),
                 prefixIcon: const Icon(Icons.email_outlined),
+              ).copyWith(
+                fillColor: Colors.grey.withValues(alpha: 0.1), // Gray background for disabled field
+                filled: true,
               ),
               keyboardType: TextInputType.emailAddress,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter your email';
-                }
-                if (!value.contains('@')) {
-                  return 'Please enter a valid email';
-                }
-                return null;
-              },
-            ),
-            
-            const SizedBox(height: 16),
-            
-            TextFormField(
-              controller: _phoneController,
-              decoration: AppTheme.inputDecoration(
-                hintText: 'Phone Number',
-                prefixIcon: const Icon(Icons.phone_outlined),
+              style: TextStyle(
+                color: Colors.grey.shade600, // Gray text color for disabled field
+                fontStyle: FontStyle.italic,
               ),
-              keyboardType: TextInputType.phone,
             ),
             
             const SizedBox(height: 30),
@@ -512,12 +516,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             // Additional Options
             _buildProfileOption(
               Icons.lock_outline,
-              'Change Password',
-              'Update your account password',
+              AppTranslations.get('changePassword'),
+              AppTranslations.get('updateAccountPassword'),
               () {
                 // Navigate to change password page
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Change password coming soon!')),
+                  SnackBar(content: Text(AppTranslations.get('changePasswordComingSoon'))),
                 );
               },
             ),
@@ -526,8 +530,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             
             _buildProfileOption(
               Icons.delete_outline,
-              'Delete Account',
-              'Permanently delete your account',
+              AppTranslations.get('deleteAccount'),
+              AppTranslations.get('permanentlyDeleteAccount'),
               () {
                 _showDeleteAccountDialog();
               },
@@ -576,7 +580,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           children: [
             ListTile(
               leading: Icon(Icons.photo_camera, color: AppTheme.primaryPink),
-              title: const Text('Take Photo'),
+              title: Text(AppTranslations.get('takePhoto')),
               onTap: () {
                 Navigator.pop(context);
                 // Implement camera functionality
@@ -584,7 +588,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             ),
             ListTile(
               leading: Icon(Icons.photo_library, color: AppTheme.primaryPink),
-              title: const Text('Choose from Gallery'),
+              title: Text(AppTranslations.get('chooseFromGallery')),
               onTap: () {
                 Navigator.pop(context);
                 // Implement gallery functionality
@@ -603,19 +607,45 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       _isLoading = true;
     });
 
-    // Simulate save operation
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully!')),
+    try {
+      final response = await widget.authService.updateProfile(
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
       );
       
-      Navigator.pop(context);
+      if (mounted) {
+        if (response.isSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppTranslations.get('profileUpdatedSuccessfully')),
+              backgroundColor: AppTheme.primaryPink,
+            ),
+          );
+          Navigator.pop(context, true); // Return true to indicate success
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.error?.message ?? AppTranslations.get('failedToUpdateProfile')),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${AppTranslations.get('errorUpdatingProfile')} $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -623,12 +653,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Account'),
-        content: const Text('Are you sure you want to permanently delete your account? This action cannot be undone.'),
+        title: Text(AppTranslations.get('deleteAccount')),
+        content: Text(AppTranslations.get('deleteAccountConfirmation')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppTranslations.get('cancel')),
           ),
           ElevatedButton(
             onPressed: () {
@@ -636,7 +666,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               // Implement account deletion
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: Text(AppTranslations.get('delete')),
           ),
         ],
       ),
@@ -645,9 +675,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 }
