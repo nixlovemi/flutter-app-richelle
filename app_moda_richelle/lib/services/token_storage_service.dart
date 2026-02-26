@@ -18,6 +18,7 @@ class TokenStorageService {
   static const String _userEmailKey = 'user_email';
   static const String _userFirstNameKey = 'user_first_name';
   static const String _userLastNameKey = 'user_last_name';
+  static const String _userAvatarUrlKey = 'user_avatar_url';
 
   /// Get the appropriate storage method based on platform
   static Future<void> _writeValue(String key, String value) async {
@@ -98,15 +99,32 @@ class TokenStorageService {
     required String email,
     required String firstName,
     required String lastName,
+    String? avatarUrl,
   }) async {
     try {
-      await Future.wait([
+      final futures = [
         _writeValue(_tokenKey, token),
         _writeValue(_userIdKey, userId.toString()),
         _writeValue(_userEmailKey, email),
         _writeValue(_userFirstNameKey, firstName),
         _writeValue(_userLastNameKey, lastName),
-      ]);
+      ];
+      
+      // Add avatar URL if provided
+      if (avatarUrl != null) {
+        if (kDebugMode) {
+          debugPrint('💾 TokenStorageService: Storing avatar URL: $avatarUrl');
+        }
+        futures.add(_writeValue(_userAvatarUrlKey, avatarUrl));
+      } else {
+        if (kDebugMode) {
+          debugPrint('💾 TokenStorageService: Avatar URL is null, clearing stored value');
+        }
+        // Clear avatar URL if not provided
+        futures.add(_deleteValue(_userAvatarUrlKey));
+      }
+      
+      await Future.wait(futures);
       if (kDebugMode) {
         debugPrint('💾 TokenStorageService: Auth data saved successfully');
       }
@@ -142,12 +160,18 @@ class TokenStorageService {
         _readValue(_userEmailKey),
         _readValue(_userFirstNameKey),
         _readValue(_userLastNameKey),
+        _readValue(_userAvatarUrlKey),
       ]);
       
       final userIdStr = results[0];
       final email = results[1];
       final firstName = results[2];
       final lastName = results[3];
+      final avatarUrl = results[4];
+      
+      if (kDebugMode) {
+        debugPrint('💾 TokenStorageService: Retrieved avatar URL: $avatarUrl');
+      }
 
       if (userIdStr != null && email != null && firstName != null && lastName != null) {
         final userData = {
@@ -155,6 +179,7 @@ class TokenStorageService {
           'email': email,
           'first_name': firstName,
           'last_name': lastName,
+          'avatar_url': avatarUrl, // Can be null
         };
         if (kDebugMode) {
           debugPrint('💾 TokenStorageService: Retrieved user data for user ID: ${userData['id']}');
@@ -201,6 +226,7 @@ class TokenStorageService {
         _deleteValue(_userEmailKey),
         _deleteValue(_userFirstNameKey),
         _deleteValue(_userLastNameKey),
+        _deleteValue(_userAvatarUrlKey),
       ]);
       if (kDebugMode) {
         debugPrint('💾 TokenStorageService: All auth data cleared');

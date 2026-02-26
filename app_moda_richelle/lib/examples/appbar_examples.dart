@@ -1,5 +1,5 @@
 /// Examples of how to use AppBar in different scenarios
-/// This file shows various AppBar implementations for the Moda Richelle app
+/// This file shows various AppBar implementations for the TimelessApp
 
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
@@ -13,8 +13,8 @@ class LoginPageWithAppBar extends StatelessWidget {
       // AppBar automatically shows back button if navigation stack exists
       appBar: AppBar(
         title: Text(AppTranslations.get('login')),
-        backgroundColor: AppTheme.lightRose,
-        foregroundColor: AppTheme.deepRose,
+        backgroundColor: AppTheme.secondary,
+        foregroundColor: AppTheme.primary,
         elevation: 0,
         // Custom back button (optional - AppBar has automatic one)
         leading: Navigator.canPop(context) ? IconButton(
@@ -46,7 +46,7 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppTranslations.get('settings')),
-        backgroundColor: AppTheme.primaryPink,
+        backgroundColor: AppTheme.primary,
         foregroundColor: Colors.white,
         // Add action buttons on the right
         actions: [
@@ -65,14 +65,14 @@ class SettingsPage extends StatelessWidget {
         padding: EdgeInsets.all(16),
         children: [
           ListTile(
-            leading: Icon(Icons.notifications, color: AppTheme.primaryPink),
+            leading: Icon(Icons.notifications, color: AppTheme.primary),
             title: Text('Notifications'),
             subtitle: Text('Manage your notification preferences'),
             trailing: Switch(value: true, onChanged: (val) {}),
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.language, color: AppTheme.primaryPink),
+            leading: Icon(Icons.language, color: AppTheme.primary),
             title: Text('Language'),
             subtitle: Text('Change app language'),
             trailing: Icon(Icons.arrow_forward_ios),
@@ -82,7 +82,7 @@ class SettingsPage extends StatelessWidget {
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.palette, color: AppTheme.primaryPink),
+            leading: Icon(Icons.palette, color: AppTheme.primary),
             title: Text('Theme'),
             subtitle: Text('Dark mode, colors'),
             trailing: Icon(Icons.arrow_forward_ios),
@@ -111,8 +111,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppTranslations.get('editProfile')),
-        backgroundColor: AppTheme.lightRose,
-        foregroundColor: AppTheme.deepRose,
+        backgroundColor: AppTheme.secondary,
+        foregroundColor: AppTheme.primary,
         // Multiple action buttons
         actions: [
           TextButton(
@@ -123,7 +123,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             child: Text(
               'Save',
               style: TextStyle(
-                color: AppTheme.deepRose,
+                color: AppTheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -140,15 +140,15 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               children: [
                 CircleAvatar(
                   radius: 50,
-                  backgroundColor: AppTheme.lightPink,
-                  child: Icon(Icons.person, size: 50, color: AppTheme.deepRose),
+                  backgroundColor: AppTheme.surfaceLight,
+                  child: Icon(Icons.person, size: 50, color: AppTheme.primary),
                 ),
                 Positioned(
                   bottom: 0,
                   right: 0,
                   child: CircleAvatar(
                     radius: 15,
-                    backgroundColor: AppTheme.primaryPink,
+                    backgroundColor: AppTheme.primary,
                     child: Icon(Icons.edit, size: 15, color: Colors.white),
                   ),
                 ),
@@ -198,7 +198,7 @@ class ProductDetailsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(productName),
         backgroundColor: Colors.transparent,
-        foregroundColor: AppTheme.deepRose,
+        foregroundColor: AppTheme.primary,
         elevation: 0,
         // Custom actions for product page
         actions: [
@@ -223,7 +223,7 @@ class ProductDetailsPage extends StatelessWidget {
             expandedHeight: 300,
             floating: false,
             pinned: true,
-            backgroundColor: AppTheme.primaryPink,
+            backgroundColor: AppTheme.primary,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(productName),
               background: Container(
@@ -264,7 +264,7 @@ class ProductDetailsPage extends StatelessWidget {
                     Text(
                       '\$99.99',
                       style: AppTheme.headingLarge.copyWith(
-                        color: AppTheme.primaryPink,
+                        color: AppTheme.primary,
                       ),
                     ),
                   ],
@@ -316,7 +316,7 @@ class CustomAppBarThemes {
   static AppBar shoppingAppBar(String title) {
     return AppBar(
       title: Text(title),
-      backgroundColor: AppTheme.primaryPink,
+      backgroundColor: AppTheme.primary,
       foregroundColor: Colors.white,
       actions: [
         IconButton(
@@ -331,8 +331,8 @@ class CustomAppBarThemes {
   static AppBar profileAppBar(String title) {
     return AppBar(
       title: Text(title),
-      backgroundColor: AppTheme.lightRose,
-      foregroundColor: AppTheme.deepRose,
+      backgroundColor: AppTheme.secondary,
+      foregroundColor: AppTheme.primary,
       elevation: 0,
     );
   }
@@ -341,7 +341,7 @@ class CustomAppBarThemes {
   static AppBar settingsAppBar(String title) {
     return AppBar(
       title: Text(title),
-      backgroundColor: AppTheme.lightPink,
+        backgroundColor: AppTheme.surfaceLight,
       foregroundColor: AppTheme.black,
       centerTitle: true,
     );

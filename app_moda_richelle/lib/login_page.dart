@@ -75,8 +75,11 @@ class _LoginPageState extends State<LoginPage> {
               
               if (emailError != null) {
                 errorMessage = emailError;
-              } else if (passwordError != null) {errorMessage = passwordError; }
-              else { errorMessage = response.error!.allMessages;} 
+              } else if (passwordError != null) {
+                errorMessage = passwordError;
+              } else {
+                errorMessage = response.error!.allMessages;
+              } 
             }
 
             AlertDialogUtils.showSimpleAlert(
@@ -105,20 +108,58 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _handleGoogleLogin() {
-    AlertDialogUtils.showSimpleAlert(
-      context: context,
-      title: AppTranslations.get('socialLogin'),
-      message: AppTranslations.get('googleLoginClicked'),
-    );
-  }
+  void _handleGoogleLogin() async {
+    setState(() {
+      _isLoading = true;
+    });
 
-  void _handleAppleLogin() {
-    AlertDialogUtils.showSimpleAlert(
-      context: context,
-      title: AppTranslations.get('socialLogin'),
-      message: AppTranslations.get('appleLoginClicked'),
-    );
+    try {
+      final response = await widget.authService.loginWithGoogle();
+
+      if (response.isSuccess) {
+        // Google login successful
+        if (mounted) {
+          if (Navigator.canPop(context)) {
+            // We came from somewhere (like profile tab), go back with success result
+            Navigator.pop(context, true);
+          } else {
+            // This is the main entry point, navigate to home  
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage(
+                authService: widget.authService,
+              )),
+            );
+          }
+        }
+      } else {
+        // Google login failed
+        if (mounted) {
+          String errorMessage = response.error?.message ?? AppTranslations.get('googleSignInError');
+          
+          AlertDialogUtils.showSimpleAlert(
+            context: context,
+            title: AppTranslations.get('socialLogin'),
+            message: errorMessage,
+          );
+        }
+      }
+    } catch (e) {
+      // Handle unexpected errors
+      if (mounted) {
+        AlertDialogUtils.showSimpleAlert(
+          context: context,
+          title: AppTranslations.get('error'),
+          message: AppTranslations.get('googleSignInError'),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   void _handleFacebookLogin() {
@@ -225,7 +266,29 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.all(AppTheme.sidePadding),
                 child: Column(
                   children: [
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 25),
+
+                    // Welcome Text
+                    /*
+                    Text(
+                      AppTranslations.welcome,
+                      style: AppTheme.headingMedium.copyWith(
+                        color: AppTheme.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    */
+
+                    Text(
+                      AppTranslations.get('chooseLoginMethod'),
+                      style: AppTheme.bodyLarge.copyWith(
+                        color: AppTheme.white.withValues(alpha: 0.8),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 35),
 
                     // Login Form
                     Form(
@@ -365,45 +428,71 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 50),
+                          const SizedBox(height: 10),
                         ],
                       ),
                     ),
+
+                    // Or divider
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                            color: AppTheme.white.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            AppTranslations.get('or'),
+                            style: AppTheme.bodyMedium.copyWith(
+                              color: AppTheme.white.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                            color: AppTheme.white.withValues(alpha: 0.3),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
 
                     // Social Media Login Buttons
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        // Apple Login
-                        Container(
-                          width: AppTheme.socialButtonSize,
-                          height: AppTheme.socialButtonSize,
-                          decoration: AppTheme.socialButtonDecoration,
-                          child: IconButton(
-                            onPressed: _handleAppleLogin,
-                            icon: Icon(
-                              Icons.apple,
-                              color: AppTheme.black,
-                              size: AppTheme.socialButtonIconSize,
-                            ),
-                          ),
-                        ),
-
                         // Google Login
                         Container(
                           width: AppTheme.socialButtonSize,
                           height: AppTheme.socialButtonSize,
-                          decoration: AppTheme.socialButtonDecoration,
+                          decoration: AppTheme.socialButtonDecoration.copyWith(
+                            color: _isLoading ? AppTheme.lightGrey : AppTheme.white,
+                          ),
                           child: IconButton(
-                            onPressed: _handleGoogleLogin,
-                            icon: Text(
-                              'G',
-                              style: TextStyle(
-                                fontSize: AppTheme.socialButtonIconSize - 5,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red[600],
-                              ),
-                            ),
+                            onPressed: _isLoading ? null : _handleGoogleLogin,
+                            icon: _isLoading
+                                ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.red[600]!,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    'G',
+                                    style: TextStyle(
+                                      fontSize: AppTheme.socialButtonIconSize - 5,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.red[600],
+                                    ),
+                                  ),
                           ),
                         ),
 
@@ -426,7 +515,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 40),
 
                     // Sign Up Button
                     Container(

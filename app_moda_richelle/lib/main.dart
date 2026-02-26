@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Moda Richelle',
+      title: 'TimelessApp',
       debugShowCheckedModeBanner: false, // Security: Hide debug banner in production
       theme: AppTheme.themeData,
       home: const AppWrapper(),

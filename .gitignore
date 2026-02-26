@@ -119,3 +119,6 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 .vscode/
 app_moda_richelle/android/.kotlin/sessions/
+vendor/
+app_moda_richelle/vendor/
+.github/instructions/snyk_rules.instructions.md

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../translations/app_translations.dart';
 import '../services/auth_service.dart';
+import '../widgets/user_avatar.dart';
 
 /// Real implementation: Settings page with AppBar for the app
 class SettingsPage extends StatefulWidget {
@@ -418,18 +419,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             Center(
               child: Stack(
                 children: [
-                  CircleAvatar(
-                    radius: 60,
+                  UserAvatar.extraLarge(
+                    user: widget.authService.currentUser,
                     backgroundColor: AppTheme.white,
-                    child: CircleAvatar(
-                      radius: 55,
-                      backgroundColor: AppTheme.primary.withValues(alpha: 0.2),
-                      child: Icon(
-                        Icons.person,
-                        size: 60,
-                        color: AppTheme.primary,
-                      ),
-                    ),
                   ),
                   Positioned(
                     bottom: 0,

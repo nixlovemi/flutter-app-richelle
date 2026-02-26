@@ -8,12 +8,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:app_moda_richelle/main.dart';
+import 'package:TimelessApp/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('App loads without errors', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
+    
+    // Pump a few frames to let initialization complete
+    for (int i = 0; i < 5; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+
+    // Verify that the app loaded successfully (should find a Scaffold)
+    expect(find.byType(Scaffold), findsOneWidget);
+    
+    // Verify that we don't have any error widgets
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('MyHomePage counter increments smoke test', (WidgetTester tester) async {
+    // Build the MyHomePage widget directly for counter testing
+    await tester.pumpWidget(MaterialApp(
+      home: MyHomePage(title: 'Test Counter'),
+    ));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

@@ -10,6 +10,8 @@ class User {
   @JsonKey(name: 'last_name')
   final String lastName;
   final String email;
+  @JsonKey(name: 'avatar_url')
+  final String? avatarUrl;
   @JsonKey(name: 'email_verified_at')
   final DateTime? emailVerifiedAt;
   @JsonKey(name: 'created_at')
@@ -22,6 +24,7 @@ class User {
     required this.firstName,
     required this.lastName,
     required this.email,
+    this.avatarUrl,
     this.emailVerifiedAt,
     required this.createdAt,
     required this.updatedAt,

@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../translations/app_translations.dart';
 import '../login_page.dart';
 import '../services/auth_service.dart';
 import '../utils/alert_dialog_utils.dart';
+import '../widgets/user_avatar.dart';
+import '../examples/avatar_test_page.dart';
 import 'settings_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -105,21 +108,24 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildAuthenticatedContent() {
     final user = widget.authService.currentUser;
+    
+    // Debug: Print avatar information
+    if (kDebugMode) {
+      debugPrint('🖼️ ProfilePage: User avatar URL: ${user?.avatarUrl}');
+      debugPrint('🖼️ ProfilePage: User full name: ${user?.fullName}');
+    }
+    
     return Container(
       width: double.infinity,
       decoration: AppTheme.loginBodyGradientDecoration,
       child: Column(
         children: [
           const SizedBox(height: 40),
-          // Profile avatar
-          CircleAvatar(
-            radius: 50,
+          // Profile avatar with Google image support
+          UserAvatar.extraLarge(
+            user: user,
             backgroundColor: AppTheme.white.withValues(alpha: 0.2),
-            child: Icon(
-              Icons.person,
-              size: 60,
-              color: Colors.white.withValues(alpha: 0.8),
-            ),
+            foregroundColor: Colors.white.withValues(alpha: 0.8),
           ),
           const SizedBox(height: 20),
           // User info
@@ -154,6 +160,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     Icons.person_outline,
                     AppTranslations.get('editProfile'),
                     () {
+                      // TODO: Create ProfileEditPage
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Profile editing coming soon!'),
+                          backgroundColor: AppTheme.primary,
+                        ),
+                      );
+                      /*
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -165,6 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           setState(() {});
                         }
                       });
+                      */
                     },
                   ),
                   const SizedBox(height: 15),
@@ -193,6 +208,22 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     },
                   ),
+                  // Debug avatar test button (only in debug mode)
+                  if (kDebugMode) ...[
+                    const SizedBox(height: 15),
+                    _buildProfileOption(
+                      Icons.bug_report,
+                      'Avatar Debug Test',
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AvatarTestPage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ],
               ),
             ),

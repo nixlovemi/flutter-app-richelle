@@ -7,10 +7,12 @@ import '../models/user.dart';
 import '../translations/app_translations.dart';
 import 'api_client.dart';
 import 'token_storage_service.dart';
+import 'google_auth_service.dart';
 
 /// Service for handling authentication operations
 class AuthService extends ChangeNotifier {
   final ApiClient _apiClient = ApiClient.instance;
+  final GoogleAuthService _googleAuthService = GoogleAuthService();
   
   User? _currentUser;
   bool _isAuthenticated = false;
@@ -68,6 +70,7 @@ class AuthService extends ChangeNotifier {
           email: loginData.user.email,
           firstName: loginData.user.firstName,
           lastName: loginData.user.lastName,
+          avatarUrl: loginData.user.avatarUrl,
         );
         
         if (kDebugMode) {
@@ -83,6 +86,100 @@ class AuthService extends ChangeNotifier {
       }
 
       return response;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Login with Google Sign-In
+  Future<ApiResponse<LoginBody>> loginWithGoogle() async {
+    _setLoading(true);
+    
+    try {
+      if (kDebugMode) {
+        debugPrint('🔐 AuthService: Starting Google Sign-In...');
+      }
+
+      // Get Google ID token
+      final googleResult = await _googleAuthService.signInWithGoogle();
+      
+      if (googleResult == null) {
+        // User cancelled Google Sign-In
+        return ApiResponse.error(
+          ApiError(message: AppTranslations.get('googleSignInCancelled')),
+          400,
+        );
+      }
+
+      if (kDebugMode) {
+        debugPrint('🔐 AuthService: Google Sign-In successful for: ${googleResult.user.email}');
+        debugPrint('🔐 Token: ${googleResult.idToken}');
+        debugPrint('🔐 ID: ${googleResult.user.id}');
+      }
+
+      // Send Google ID token to your API for verification
+      final response = await _apiClient.postWrapped<LoginBody>(
+        '/auth/login',
+        (json) => LoginBody.fromJson(json),
+        body: {
+          'provider_token': googleResult.idToken,
+          'provider_id': googleResult.user.id,
+          'provider': 'google',
+        },
+        requireAuth: false,
+      );
+
+      if (response.isSuccess && response.data != null) {
+        final loginData = response.data!;
+        
+        if (kDebugMode) {
+          debugPrint('🔐 AuthService: Google API login successful for user: ${loginData.user.email}');
+          debugPrint('🔐 AuthService: Sanctum token received (${loginData.token.length} chars)');
+          debugPrint('🔐 AuthService: Avatar URL from API: ${loginData.user.avatarUrl}');
+        }
+        
+        // Store authentication data securely
+        await TokenStorageService.saveAuthData(
+          token: loginData.token,
+          userId: loginData.user.id,
+          email: loginData.user.email,
+          firstName: loginData.user.firstName,
+          lastName: loginData.user.lastName,
+          avatarUrl: loginData.user.avatarUrl,
+        );
+        
+        if (kDebugMode) {
+          debugPrint('🔐 AuthService: Token and user data saved successfully');
+        }
+        
+        // Set authentication state
+        _setAuthenticationState(loginData.user, loginData.token);
+        
+        if (kDebugMode) {
+          debugPrint('🔐 AuthService: Google authentication state set');
+        }
+      } else {
+        // If API call failed, sign out from Google to clean up
+        await _googleAuthService.signOut();
+      }
+
+      return response;
+    } catch (error) {
+      if (kDebugMode) {
+        debugPrint('🔐 AuthService: Google Sign-In error: $error');
+      }
+      
+      // Clean up Google sign-in on error
+      try {
+        await _googleAuthService.signOut();
+      } catch (e) {
+        // Ignore sign-out errors
+      }
+      
+      return ApiResponse.error(
+        ApiError(message: 'Google Sign-In failed: ${error.toString()}'),
+        500,
+      );
     } finally {
       _setLoading(false);
     }
@@ -212,6 +309,17 @@ class AuthService extends ChangeNotifier {
     _isAuthenticated = false;
     _apiClient.clearAuth();
     await TokenStorageService.clearAuthData();
+    
+    // Also sign out from Google to clean up Google session
+    try {
+      await _googleAuthService.signOut();
+    } catch (e) {
+      // Ignore Google sign-out errors during app logout
+      if (kDebugMode) {
+        debugPrint('🔐 AuthService: Google sign-out error during logout (ignored): $e');
+      }
+    }
+    
     notifyListeners();
   }
 
@@ -248,6 +356,7 @@ class AuthService extends ChangeNotifier {
         
         if (kDebugMode) {
           debugPrint('🔐 AuthService: Token and user data retrieved');
+          debugPrint('🔐 AuthService: userData = $userData');
         }
         
         if (token != null && userData != null) {
@@ -257,12 +366,14 @@ class AuthService extends ChangeNotifier {
             firstName: userData['first_name'],
             lastName: userData['last_name'],
             email: userData['email'],
+            avatarUrl: userData['avatar_url'],
             createdAt: DateTime.now(), // Default value - consider storing this too
             updatedAt: DateTime.now(), // Default value
           );
           
           if (kDebugMode) {
             debugPrint('🔐 AuthService: User authenticated: ${user.email}');
+            debugPrint('🔐 AuthService: User avatar URL: ${user.avatarUrl}');
           }
           
           // Set authentication state without immediate validation

@@ -1,4 +1,4 @@
-package com.example.app_moda_richelle
+package com.richelletimeless.app
 
 import io.flutter.embedding.android.FlutterActivity
 

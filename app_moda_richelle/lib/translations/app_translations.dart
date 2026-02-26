@@ -26,6 +26,10 @@ class AppTranslations {
     // Login Page
     'welcome': 'Bem-vindo!',
     'loginSubtitle': 'Faça login e comece sua jornada!',
+    'chooseLoginMethod': 'Escolha como deseja fazer login',
+    'or': 'ou',
+    'google': 'Google',
+    'facebook': 'Facebook',
     'email': 'E-mail',
     'emailPlaceholder': 'Digite seu endereço de e-mail',
     'password': 'Senha',
@@ -66,8 +70,13 @@ class AppTranslations {
     'forgotPasswordClicked': 'Recuperação de senha foi acionada!',
     'signUpClicked': 'Criação de conta foi acionada!',
     
+    // Google Sign-In Messages
+    'googleSignInCancelled': 'Login com Google foi cancelado',
+    'googleSignInError': 'Erro no login com Google',
+    'signInWithGoogle': 'Entrar com Google',
+    
     // General
-    'appName': 'Moda Richelle',
+    'appName': 'TimelessApp',
     'loading': 'Carregando...',
     'retry': 'Tentar novamente',
     'close': 'Fechar',
@@ -130,7 +139,7 @@ class AppTranslations {
     'english': 'Inglês',
     'portuguese': 'Português',
     'appDescription': 'Um aplicativo moderno de moda construído com Flutter.',
-    'copyright': '© 2026 Moda Richelle. Todos os direitos reservados.',
+    'copyright': '© 2026 TimelessApp. Todos os direitos reservados.',
     'save': 'Salvar',
     'firstName': 'Nome',
     'lastName': 'Sobrenome',
@@ -152,6 +161,10 @@ class AppTranslations {
     // Login Page
     'welcome': 'Welcome!',
     'loginSubtitle': 'Sign in and start your journey!',
+    'chooseLoginMethod': 'Choose how you want to sign in',
+    'or': 'or',
+    'google': 'Google',
+    'facebook': 'Facebook',
     'email': 'Email',
     'emailPlaceholder': 'Enter your email address',
     'password': 'Password',
@@ -192,8 +205,13 @@ class AppTranslations {
     'forgotPasswordClicked': 'Forgot password clicked!',
     'signUpClicked': 'Sign up clicked!',
     
+    // Google Sign-In Messages
+    'googleSignInCancelled': 'Google Sign-In was cancelled',
+    'googleSignInError': 'Google Sign-In error',
+    'signInWithGoogle': 'Sign in with Google',
+    
     // General
-    'appName': 'Moda Richelle',
+    'appName': 'TimelessApp',
     'loading': 'Loading...',
     'retry': 'Retry',
     'close': 'Close',
@@ -254,7 +272,7 @@ class AppTranslations {
     'english': 'English',
     'portuguese': 'Português',
     'appDescription': 'A modern fashion shopping app built with Flutter.',
-    'copyright': '© 2026 Moda Richelle. All rights reserved.',
+    'copyright': '© 2026 TimelessApp. All rights reserved.',
     'save': 'Save',
     'firstName': 'First Name',
     'lastName': 'Last Name',
