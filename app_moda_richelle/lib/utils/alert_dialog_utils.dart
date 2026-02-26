@@ -34,12 +34,12 @@ class AlertDialogUtils {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               style: TextButton.styleFrom(
-                foregroundColor: AppTheme.primaryPink,
+                foregroundColor: AppTheme.primary,
               ),
               child: Text(
                 AppTranslations.ok,
                 style: AppTheme.buttonText.copyWith(
-                  color: AppTheme.primaryPink,
+                  color: AppTheme.primary,
                 ),
               ),
             ),
@@ -102,12 +102,12 @@ class AlertDialogUtils {
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
               style: TextButton.styleFrom(
-                foregroundColor: AppTheme.primaryPink,
+                foregroundColor: AppTheme.primary,
               ),
               child: Text(
                 yesText ?? AppTranslations.yes,
                 style: AppTheme.buttonText.copyWith(
-                  color: AppTheme.primaryPink,
+                  color: AppTheme.primary,
                 ),
               ),
             ),

@@ -24,13 +24,13 @@ class _SettingsPageState extends State<SettingsPage> {
       // Standard AppBar with back button and title
       appBar: AppBar(
         title: Text(AppTranslations.get('settings')),
-        backgroundColor: AppTheme.lightRose,
-        foregroundColor: AppTheme.deepRose,
+        backgroundColor: AppTheme.surface,
+        foregroundColor: AppTheme.primary,
         elevation: 2,
         shadowColor: AppTheme.black.withValues(alpha: 0.1),
         // The back button appears automatically!
       ),
-      backgroundColor: AppTheme.lightPink,
+      backgroundColor: AppTheme.surfaceLight,
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -167,7 +167,7 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Text(
         title,
         style: AppTheme.headingMedium.copyWith(
-          color: AppTheme.deepRose,
+          color: AppTheme.primary,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -197,12 +197,12 @@ class _SettingsPageState extends State<SettingsPage> {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppTheme.primaryPink.withValues(alpha: 0.1),
+            color: AppTheme.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
-            color: AppTheme.primaryPink,
+            color: AppTheme.primary,
             size: 24,
           ),
         ),
@@ -250,12 +250,12 @@ class _SettingsPageState extends State<SettingsPage> {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppTheme.primaryPink.withValues(alpha: 0.1),
+            color: AppTheme.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
-            color: AppTheme.primaryPink,
+            color: AppTheme.primary,
             size: 24,
           ),
         ),
@@ -272,7 +272,7 @@ class _SettingsPageState extends State<SettingsPage> {
         trailing: Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: AppTheme.primaryPink,
+          activeColor: AppTheme.primary,
         ),
       ),
     );
@@ -321,7 +321,7 @@ class _SettingsPageState extends State<SettingsPage> {
       applicationVersion: '1.0.0',
       applicationIcon: Icon(
         Icons.shopping_bag,
-        color: AppTheme.primaryPink,
+        color: AppTheme.primary,
         size: 48,
       ),
       children: [
@@ -393,22 +393,22 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppTranslations.get('editProfile')),
-        backgroundColor: AppTheme.lightRose,
-        foregroundColor: AppTheme.deepRose,
+        backgroundColor: AppTheme.surface,
+        foregroundColor: AppTheme.primary,
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _saveProfile,
             child: Text(
               AppTranslations.get('save'),
               style: TextStyle(
-                color: _isLoading ? AppTheme.mediumGrey : AppTheme.deepRose,
+                color: _isLoading ? AppTheme.mediumGrey : AppTheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
         ],
       ),
-      backgroundColor: AppTheme.lightPink,
+      backgroundColor: AppTheme.surfaceLight,
       body: Form(
         key: _formKey,
         child: ListView(
@@ -423,11 +423,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                     backgroundColor: AppTheme.white,
                     child: CircleAvatar(
                       radius: 55,
-                      backgroundColor: AppTheme.primaryPink.withValues(alpha: 0.2),
+                      backgroundColor: AppTheme.primary.withValues(alpha: 0.2),
                       child: Icon(
                         Icons.person,
                         size: 60,
-                        color: AppTheme.primaryPink,
+                        color: AppTheme.primary,
                       ),
                     ),
                   ),
@@ -436,7 +436,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                     right: 0,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryPink,
+                        color: AppTheme.primary,
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.white, width: 3),
                       ),
@@ -561,7 +561,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         ],
       ),
       child: ListTile(
-        leading: Icon(icon, color: AppTheme.primaryPink),
+        leading: Icon(icon, color: AppTheme.primary),
         title: Text(title, style: AppTheme.bodyLarge),
         subtitle: Text(subtitle, style: AppTheme.bodyMedium),
         trailing: Icon(Icons.arrow_forward_ios, size: 16, color: AppTheme.mediumGrey),
@@ -579,7 +579,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(Icons.photo_camera, color: AppTheme.primaryPink),
+              leading: Icon(Icons.photo_camera, color: AppTheme.primary),
               title: Text(AppTranslations.get('takePhoto')),
               onTap: () {
                 Navigator.pop(context);
@@ -587,7 +587,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.photo_library, color: AppTheme.primaryPink),
+              leading: Icon(Icons.photo_library, color: AppTheme.primary),
               title: Text(AppTranslations.get('chooseFromGallery')),
               onTap: () {
                 Navigator.pop(context);
@@ -618,7 +618,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppTranslations.get('profileUpdatedSuccessfully')),
-              backgroundColor: AppTheme.primaryPink,
+              backgroundColor: AppTheme.primary,
             ),
           );
           Navigator.pop(context, true); // Return true to indicate success

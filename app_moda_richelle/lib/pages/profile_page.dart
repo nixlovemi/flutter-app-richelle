@@ -20,14 +20,14 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightPink,
+      backgroundColor: AppTheme.surfaceLight,
       body: Column(
         children: [
           // Simple header
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: AppTheme.lightRose,
+              color: AppTheme.surface,
               boxShadow: [
                 BoxShadow(
                   color: AppTheme.black.withValues(alpha: 0.3),
@@ -58,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Text(
                       AppTranslations.get('profile'),
                       style: AppTheme.headingMedium.copyWith(
-                        color: AppTheme.deepRose,
+                        color: AppTheme.primary,
                       ),
                     ),
                     const Spacer(),
@@ -81,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           },
                           icon: Icon(
                             Icons.logout,
-                            color: AppTheme.primaryPink,
+                            color: AppTheme.primary,
                             size: 20,
                           ),
                         ),
@@ -188,7 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Help & Support coming soon!'),
-                          backgroundColor: AppTheme.primaryPink,
+                          backgroundColor: AppTheme.primary,
                         ),
                       );
                     },
@@ -248,7 +248,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  foregroundColor: AppTheme.primaryPink,
+                  foregroundColor: AppTheme.primary,
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25),

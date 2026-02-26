@@ -8,14 +8,14 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightPink,
+      backgroundColor: AppTheme.surfaceLight,
       body: Column(
         children: [
           // Simple header
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: AppTheme.lightRose,
+              color: AppTheme.surface,
               boxShadow: [
                 BoxShadow(
                   color: AppTheme.black.withValues(alpha: 0.3),
@@ -46,7 +46,7 @@ class CartPage extends StatelessWidget {
                     Text(
                       AppTranslations.get('cart'),
                       style: AppTheme.headingMedium.copyWith(
-                        color: AppTheme.deepRose,
+                        color: AppTheme.primary,
                       ),
                     ),
                   ],

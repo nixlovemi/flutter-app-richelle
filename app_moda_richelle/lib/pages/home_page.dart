@@ -263,7 +263,7 @@ class _HomePageState extends State<HomePage> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      foregroundColor: AppTheme.primaryPink,
+                      foregroundColor: AppTheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
@@ -285,7 +285,7 @@ class _HomePageState extends State<HomePage> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(AppTranslations.get('registerComingSoon')),
-                        backgroundColor: AppTheme.primaryPink,
+                        backgroundColor: AppTheme.primary,
                       ),
                     );
                   },
@@ -476,7 +476,7 @@ class _HomePageState extends State<HomePage> {
                 ListTile(
                   leading: Icon(
                     Icons.logout,
-                    color: AppTheme.primaryPink,
+                    color: AppTheme.primary,
                     size: 24,
                   ),
                   title: Text(
@@ -503,7 +503,7 @@ class _HomePageState extends State<HomePage> {
                 ListTile(
                   leading: Icon(
                     Icons.login,
-                    color: AppTheme.primaryPink,
+                    color: AppTheme.primary,
                     size: 24,
                   ),
                   title: Text(
@@ -536,14 +536,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightPink,
+      backgroundColor: AppTheme.surfaceLight,
       body: Column(
         children: [
           // Header with search and menu
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: AppTheme.lightRose,
+              color: AppTheme.surface,
               boxShadow: [
                 BoxShadow(
                   color: AppTheme.black.withValues(alpha: 0.3),
@@ -634,7 +634,7 @@ class _HomePageState extends State<HomePage> {
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          selectedItemColor: AppTheme.primaryPink,
+          selectedItemColor: AppTheme.primary,
           unselectedItemColor: AppTheme.mediumGrey,
           selectedFontSize: 12,
           unselectedFontSize: 10,

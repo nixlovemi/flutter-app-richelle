@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Color Palette inspired by the fashion app designs
-  static const Color primaryPink = Color(0xFFE91E63);
-  static const Color lightPink = Color(0xFFFFE0E6);
-  static const Color darkPink = Color(0xFFAD1457);
-  static const Color accentRose = Color(0xFFF8BBD9);
-  static const Color softPink = Color(0xFFFCE4EC);
-  static const Color deepRose = Color(0xFFDA7352);
-  static const Color lightRose = Color(0xFFFFE7E7);
+  // Color Palette - Semantic color names for easy theme changes
+  static const Color primary = Color(0xFF231201);      // Main brand color
+  static const Color surfaceLight = Color(0xFFEDEAE7);  // Light background
+  static const Color primaryDark = Color(0xFF1A0D01);   // Dark variant of primary
+  static const Color secondary = Color(0xFFC4B59A);     // Secondary accent
+  static const Color surfaceSoft = Color(0xFFF2EFEC);   // Soft background
+  static const Color tertiary = Color(0xFF8B7B6B);     // Tertiary color
+  static const Color surface = Color(0xFFE8E3DD);      // General surface color
   
   // Neutral Colors
   static const Color white = Color(0xFFFFFFFF);
@@ -19,18 +19,18 @@ class AppTheme {
   
   // Gradient Colors
   static const List<Color> primaryGradient = [
-    lightRose,
-    Color.fromARGB(204, 255, 231, 231), // lightRose with 80% opacity
+    surface,
+    Color.fromARGB(204, 232, 227, 221), // surface with 80% opacity
   ];
   
   static const List<Color> backgroundGradient = [
-    Color(0xFFFCE4EC),
-    Color(0xFFFFE0E6),
+    surfaceSoft,
+    surfaceLight,
   ];
   
   static const List<Color> loginBodyGradient = [
-    Color(0xFFf0a4a8),
-    Color(0xFFf9bbae),
+    secondary,
+    tertiary,
   ];
 
   // Typography
@@ -163,7 +163,7 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
-        borderSide: BorderSide(color: primaryPink, width: 2),
+        borderSide: BorderSide(color: primary, width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
@@ -272,10 +272,10 @@ class AppTheme {
       useMaterial3: true,
       fontFamily: fontFamily,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryPink,
-        primary: primaryPink,
-        secondary: accentRose,
-        surface: lightPink,
+        seedColor: primary,
+        primary: primary,
+        secondary: secondary,
+        surface: surfaceLight,
         error: Colors.red,
       ),
       
@@ -329,7 +329,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: primaryPink, width: 2),
+          borderSide: BorderSide(color: primary, width: 2),
         ),
       ),
       

@@ -140,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: AppTheme.lightRose,
+                color: AppTheme.surface,
                 borderRadius: const BorderRadius.only(
                   bottomRight: Radius.circular(50),
                 ),
@@ -171,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onPressed: () => Navigator.pop(context),
                                 icon: Icon(
                                   Icons.arrow_back_ios,
-                                  color: AppTheme.deepRose,
+                                  color: AppTheme.primary,
                                   size: 24,
                                 ),
                                 tooltip: AppTranslations.get('goBack'),
@@ -189,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
                                 Text(
                                   AppTranslations.welcome,
                                   style: AppTheme.headingLarge.copyWith(
-                                    color: AppTheme.deepRose,
+                                    color: AppTheme.primary,
                                     fontSize: 36,
                                   ),
                                 ),

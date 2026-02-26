@@ -34,7 +34,7 @@ class LanguagePicker extends StatelessWidget {
           dropdownColor: AppTheme.white,
           icon: Icon(
             Icons.language,
-            color: AppTheme.primaryPink,
+            color: AppTheme.primary,
           ),
           onChanged: (AppLanguage? newLanguage) {
             if (newLanguage != null) {
@@ -106,7 +106,7 @@ class LanguageToggleButton extends StatelessWidget {
         ),
         child: Icon(
           Icons.language,
-          color: AppTheme.primaryPink,
+          color: AppTheme.primary,
           size: 20,
         ),
       ),
