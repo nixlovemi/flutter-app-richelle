@@ -3,6 +3,7 @@ import 'theme/app_theme.dart';
 import 'utils/alert_dialog_utils.dart';
 import 'translations/app_translations.dart';
 import 'pages/home_page.dart';
+import 'pages/registration_page.dart';
 import 'services/auth_service.dart';
 // import 'widgets/language_picker.dart';
 
@@ -162,13 +163,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _handleFacebookLogin() {
-    AlertDialogUtils.showSimpleAlert(
-      context: context,
-      title: AppTranslations.get('socialLogin'),
-      message: AppTranslations.get('facebookLoginClicked'),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -372,7 +367,7 @@ class _LoginPageState extends State<LoginPage> {
                                     if (value == null || value.isEmpty) {
                                       return AppTranslations.get('passwordRequired');
                                     }
-                                    if (value.length < 6) {
+                                    if (value.length < 8) {
                                       return AppTranslations.get('passwordTooShort');
                                     }
                                     return null;
@@ -461,59 +456,71 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 30),
 
-                    // Social Media Login Buttons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        // Google Login
-                        Container(
-                          width: AppTheme.socialButtonSize,
-                          height: AppTheme.socialButtonSize,
-                          decoration: AppTheme.socialButtonDecoration.copyWith(
-                            color: _isLoading ? AppTheme.lightGrey : AppTheme.white,
-                          ),
-                          child: IconButton(
-                            onPressed: _isLoading ? null : _handleGoogleLogin,
-                            icon: _isLoading
-                                ? SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.red[600]!,
-                                      ),
-                                    ),
-                                  )
-                                : Text(
-                                    'G',
-                                    style: TextStyle(
-                                      fontSize: AppTheme.socialButtonIconSize - 5,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red[600],
-                                    ),
-                                  ),
-                          ),
-                        ),
-
-                        // Facebook Login
-                        Container(
-                          width: AppTheme.socialButtonSize,
-                          height: AppTheme.socialButtonSize,
-                          decoration: AppTheme.socialButtonDecoration,
-                          child: IconButton(
-                            onPressed: _handleFacebookLogin,
-                            icon: Text(
-                              'f',
-                              style: TextStyle(
-                                fontSize: AppTheme.socialButtonIconSize - 5,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue[700],
+                    // Google Login Button
+                    FractionallySizedBox(
+                      widthFactor: 0.7, // 70% of screen width
+                      child: Container(
+                        decoration: AppTheme.buttonShadowDecoration,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _handleGoogleLogin,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.white,
+                            foregroundColor: AppTheme.black,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(
+                                color: AppTheme.lightGrey.withValues(alpha: 0.3),
+                                width: 1,
                               ),
                             ),
+                            disabledBackgroundColor: AppTheme.lightGrey,
                           ),
+                          child: _isLoading
+                              ? SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.red[600]!,
+                                    ),
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 20,
+                                      height: 20,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red[600],
+                                        borderRadius: BorderRadius.circular(2),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'G',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppTheme.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      AppTranslations.get('continueWithGoogle'),
+                                      style: AppTheme.buttonText.copyWith(
+                                        color: AppTheme.black,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                         ),
-                      ],
+                      ),
                     ),
                     const SizedBox(height: 40),
 
@@ -522,11 +529,16 @@ class _LoginPageState extends State<LoginPage> {
                       width: double.infinity,
                       decoration: AppTheme.buttonShadowDecoration,
                       child: OutlinedButton(
-                        onPressed: () => AlertDialogUtils.showSimpleAlert(
-                          context: context,
-                          title: AppTranslations.get('registration'),
-                          message: AppTranslations.get('signUpClicked'),
-                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RegistrationPage(
+                                authService: widget.authService,
+                              ),
+                            ),
+                          );
+                        },
                         style: AppTheme.secondaryButtonStyle,
                         child: Text(
                           AppTranslations.signUp,

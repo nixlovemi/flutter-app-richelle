@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import '../models/api_response.dart';
 import '../models/api_error.dart';
 import '../models/login_request.dart';
+import '../models/registration_request.dart';
+import '../models/registration_response.dart';
 import '../models/login_body.dart';
 import '../models/user.dart';
 import '../translations/app_translations.dart';
@@ -178,6 +180,55 @@ class AuthService extends ChangeNotifier {
       
       return ApiResponse.error(
         ApiError(message: 'Google Sign-In failed: ${error.toString()}'),
+        500,
+      );
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Register a new user (does not authenticate - requires email verification)
+  Future<ApiResponse<RegistrationResponse>> register(RegistrationRequest registrationRequest) async {
+    _setLoading(true);
+    
+    try {
+      if (kDebugMode) {
+        debugPrint('🔐 AuthService: Starting user registration for email: ${registrationRequest.email}');
+      }
+      
+      final response = await _apiClient.postWrapped<RegistrationResponse>(
+        '/auth/register',
+        (json) => RegistrationResponse.fromJson(json),
+        body: registrationRequest.toJson(),
+        requireAuth: false,
+      );
+
+      if (response.isSuccess && response.data != null) {
+        if (kDebugMode) {
+          debugPrint('🔐 AuthService: Registration successful for email: ${registrationRequest.email}');
+          debugPrint('🔐 AuthService: API Success: ${response.data!.success ?? false}');
+          debugPrint('🔐 AuthService: API Message: ${response.data!.message}');
+          debugPrint('🔐 AuthService: Body Message: ${response.data!.body?.message ?? "No body message"}');
+          debugPrint('🔐 AuthService: User created: ${response.data!.body?.user.email ?? "No user email"}');
+          debugPrint('🔐 AuthService: User needs to verify email before login');
+        }
+        
+        // NOTE: No authentication data is stored here
+        // User must verify email and then login manually
+      } else {
+        if (kDebugMode) {
+          debugPrint('🚨 AuthService: Registration failed: ${response.error?.message}');
+        }
+      }
+
+      return response;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('🚨 AuthService: Registration error: $e');
+      }
+      
+      return ApiResponse.error(
+        ApiError(message: 'Registration failed: ${e.toString()}'),
         500,
       );
     } finally {
