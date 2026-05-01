@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../translations/app_translations.dart';
+import '../utils/snackbar_utils.dart';
 
 // Example 1: Login Page with AppBar (Alternative to current custom header)
 class LoginPageWithAppBar extends StatelessWidget {
@@ -54,8 +55,9 @@ class SettingsPage extends StatelessWidget {
             icon: Icon(Icons.save),
             onPressed: () {
               // Save settings
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Settings saved!')),
+              SnackBarUtils.showSuccess(
+                context,
+                AppTranslations.get('settingsSaved'),
               );
             },
           ),

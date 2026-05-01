@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../translations/app_translations.dart';
 import '../services/auth_service.dart';
+import '../services/error_message_service.dart';
+import '../services/token_storage_service.dart';
+import '../utils/snackbar_utils.dart';
 import '../widgets/user_avatar.dart';
 
 /// Real implementation: Settings page with AppBar for the app
@@ -512,8 +515,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               AppTranslations.get('updateAccountPassword'),
               () {
                 // Navigate to change password page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(AppTranslations.get('changePasswordComingSoon'))),
+                SnackBarUtils.showInfo(
+                  context,
+                  ErrorMessageService.getComingSoonMessage('change password'),
                 );
               },
             ),
@@ -607,30 +611,20 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       
       if (mounted) {
         if (response.isSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppTranslations.get('profileUpdatedSuccessfully')),
-              backgroundColor: AppTheme.primary,
-            ),
+          SnackBarUtils.showSuccess(
+            context,
+            ErrorMessageService.getProfileSuccessMessage('update'),
           );
           Navigator.pop(context, true); // Return true to indicate success
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(response.error?.message ?? AppTranslations.get('failedToUpdateProfile')),
-              backgroundColor: Colors.red,
-            ),
-          );
+          final errorMessage = ErrorMessageService.getApiErrorMessage(response.error);
+          SnackBarUtils.showError(context, errorMessage);
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${AppTranslations.get('errorUpdatingProfile')} $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        final errorMessage = ErrorMessageService.getExceptionMessage(e as Exception);
+        SnackBarUtils.showError(context, errorMessage);
       }
     } finally {
       if (mounted) {
@@ -641,26 +635,131 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     }
   }
 
-  void _showDeleteAccountDialog() {
+  void _showDeleteAccountDialog() async {
+    // Check if user logged in with social auth
+    final isSocialAuth = await TokenStorageService.isLoggedInWithSocialAuth();
+    
+    final passwordController = TextEditingController();
+    bool isLoading = false;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppTranslations.get('deleteAccount')),
-        content: Text(AppTranslations.get('deleteAccountConfirmation')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppTranslations.get('cancel')),
+      barrierDismissible: false, // Prevent dismissing while loading
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.warning, color: Colors.red),
+              SizedBox(width: 8),
+              Text(AppTranslations.get('deleteAccount')),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // Implement account deletion
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text(AppTranslations.get('delete')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppTranslations.get('deleteAccountConfirmation'),
+                style: TextStyle(fontSize: 16),
+              ),
+              // Only show password field if user logged in with email/password
+              if (!isSocialAuth) ...[
+                SizedBox(height: 16),
+                Text(
+                  AppTranslations.get('password'),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.primary,
+                  ),
+                ),
+                SizedBox(height: 8),
+                TextField(
+                  controller: passwordController,
+                  obscureText: true,
+                  enabled: !isLoading,
+                  decoration: AppTheme.inputDecoration(
+                    hintText: AppTranslations.get('password'),
+                    prefixIcon: Icon(Icons.lock_outline),
+                  ),
+                  autofocus: true,
+                ),
+              ],
+            ],
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: isLoading ? null : () {
+                passwordController.dispose();
+                Navigator.pop(context);
+              },
+              child: Text(AppTranslations.get('cancel')),
+            ),
+            ElevatedButton(
+              onPressed: isLoading ? null : () async {
+                final password = isSocialAuth ? '' : passwordController.text.trim();
+                
+                // Only validate password if not social auth
+                if (!isSocialAuth && password.isEmpty) {
+                  SnackBarUtils.showError(
+                    context,
+                    AppTranslations.get('pleaseEnterPassword'),
+                  );
+                  return;
+                }
+
+                setDialogState(() {
+                  isLoading = true;
+                });
+
+                try {
+                  final response = await widget.authService.deleteAccount(password);
+                  
+                  passwordController.dispose();
+                  Navigator.pop(context); // Close dialog
+                  
+                  if (mounted) {
+                    if (response.isSuccess) {
+                      // Show success message
+                      SnackBarUtils.showSuccess(
+                        context,
+                        response.error?.message ?? 'Account deleted successfully',
+                      );
+                      
+                      // Navigate back to the main screen since user is logged out
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    } else {
+                      // Show error message
+                      final errorMessage = ErrorMessageService.getApiErrorMessage(response.error);
+                      SnackBarUtils.showError(context, errorMessage);
+                    }
+                  }
+                } catch (e) {
+                  passwordController.dispose();
+                  Navigator.pop(context); // Close dialog
+                  
+                  if (mounted) {
+                    final errorMessage = ErrorMessageService.getExceptionMessage(e as Exception);
+                    SnackBarUtils.showError(context, errorMessage);
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: isLoading 
+                ? SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Text(AppTranslations.get('delete')),
+            ),
+          ],
+        ),
       ),
     );
   }

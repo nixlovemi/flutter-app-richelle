@@ -4,6 +4,7 @@ import '../theme/app_theme.dart';
 import '../utils/alert_dialog_utils.dart';
 import '../translations/app_translations.dart';
 import '../services/auth_service.dart';
+import '../services/error_message_service.dart';
 import '../models/registration_request.dart';
 
 class RegistrationPage extends StatefulWidget {
@@ -87,27 +88,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         } else {
           // Registration failed - show error message
           if (mounted) {
-            String errorMessage = response.error?.message ?? AppTranslations.get('registrationFailed');
-            
-            // Check for specific field errors
-            if (response.error?.errors != null) {
-              final emailError = response.error!.getFieldError('email');
-              final firstNameError = response.error!.getFieldError('first_name');
-              final lastNameError = response.error!.getFieldError('last_name');
-              final passwordError = response.error!.getFieldError('password');
-              
-              if (emailError != null) {
-                errorMessage = emailError;
-              } else if (firstNameError != null) {
-                errorMessage = firstNameError;
-              } else if (lastNameError != null) {
-                errorMessage = lastNameError;
-              } else if (passwordError != null) {
-                errorMessage = passwordError;
-              } else {
-                errorMessage = response.error!.allMessages;
-              } 
-            }
+            final errorMessage = ErrorMessageService.getRegistrationErrorMessage(response.error);
 
             AlertDialogUtils.showSimpleAlert(
               context: context,
@@ -119,10 +100,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
       } catch (e) {
         // Handle unexpected errors
         if (mounted) {
+          final errorMessage = ErrorMessageService.getExceptionMessage(e as Exception);
+          
           AlertDialogUtils.showSimpleAlert(
             context: context,
             title: AppTranslations.get('error'),
-            message: AppTranslations.get('unexpectedError'),
+            message: errorMessage,
           );
         }
       } finally {

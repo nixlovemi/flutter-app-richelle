@@ -8,6 +8,7 @@ import '../services/auth_service.dart';
 import '../widgets/user_avatar.dart';
 import '../examples/avatar_test_page.dart';
 import 'settings_page.dart';
+import 'registration_page.dart';
 
 class HomePage extends StatefulWidget {
   final AuthService authService;
@@ -20,6 +21,37 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.authService.addListener(_handleAuthStateChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant HomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.authService != widget.authService) {
+      oldWidget.authService.removeListener(_handleAuthStateChanged);
+      widget.authService.addListener(_handleAuthStateChanged);
+    }
+  }
+
+  void _handleAuthStateChanged() {
+    if (!mounted) return;
+
+    // If the user is logged out/deleted while on profile tab,
+    // redirect to Home tab to prevent interacting with profile actions.
+    if (!widget.authService.isAuthenticated && _selectedIndex == 3) {
+      setState(() {
+        _selectedIndex = 0;
+      });
+      return;
+    }
+
+    // Keep HomePage in sync with auth updates.
+    setState(() {});
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -284,13 +316,17 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 15),
                 TextButton(
                   onPressed: () {
-                    // TODO: Navigate to registration page
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(AppTranslations.get('registerComingSoon')),
-                        backgroundColor: AppTheme.primary,
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RegistrationPage(authService: widget.authService),
                       ),
-                    );
+                    ).then((registrationCompleted) {
+                      // Refresh if registration flow completed
+                      if (registrationCompleted == true) {
+                        setState(() {});
+                      }
+                    });
                   },
                   child: Text(
                     AppTranslations.get('createAccount'),
@@ -686,5 +722,11 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    widget.authService.removeListener(_handleAuthStateChanged);
+    super.dispose();
   }
 }

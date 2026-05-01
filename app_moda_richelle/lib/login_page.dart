@@ -5,6 +5,7 @@ import 'translations/app_translations.dart';
 import 'pages/home_page.dart';
 import 'pages/registration_page.dart';
 import 'services/auth_service.dart';
+import 'services/error_message_service.dart';
 // import 'widgets/language_picker.dart';
 
 class LoginPage extends StatefulWidget {
@@ -67,21 +68,7 @@ class _LoginPageState extends State<LoginPage> {
         } else {
           // Login failed - show error message
           if (mounted) {
-            String errorMessage = response.error?.message ?? AppTranslations.get('loginFailed');
-            
-            // Check for specific field errors
-            if (response.error?.errors != null) {
-              final emailError = response.error!.getFieldError('email');
-              final passwordError = response.error!.getFieldError('password');
-              
-              if (emailError != null) {
-                errorMessage = emailError;
-              } else if (passwordError != null) {
-                errorMessage = passwordError;
-              } else {
-                errorMessage = response.error!.allMessages;
-              } 
-            }
+            final errorMessage = ErrorMessageService.getLoginErrorMessage(response.error);
 
             AlertDialogUtils.showSimpleAlert(
               context: context,
@@ -91,12 +78,14 @@ class _LoginPageState extends State<LoginPage> {
           }
         }
       } catch (e) {
-        // Handle unexpected errors
+        // Handle unexpected errors with more specific messages
         if (mounted) {
+          final errorMessage = ErrorMessageService.getExceptionMessage(e as Exception);
+          
           AlertDialogUtils.showSimpleAlert(
             context: context,
             title: AppTranslations.get('error'),
-            message: AppTranslations.get('unexpectedError'),
+            message: errorMessage,
           );
         }
       } finally {
@@ -136,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         // Google login failed
         if (mounted) {
-          String errorMessage = response.error?.message ?? AppTranslations.get('googleSignInError');
+          final errorMessage = ErrorMessageService.getGoogleLoginErrorMessage(response.error);
           
           AlertDialogUtils.showSimpleAlert(
             context: context,
@@ -146,12 +135,14 @@ class _LoginPageState extends State<LoginPage> {
         }
       }
     } catch (e) {
-      // Handle unexpected errors
+      // Handle unexpected errors with more specific messages
       if (mounted) {
+        final errorMessage = ErrorMessageService.getExceptionMessage(e as Exception);
+        
         AlertDialogUtils.showSimpleAlert(
           context: context,
           title: AppTranslations.get('error'),
-          message: AppTranslations.get('googleSignInError'),
+          message: errorMessage,
         );
       }
     } finally {

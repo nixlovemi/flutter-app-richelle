@@ -4,10 +4,13 @@ import '../theme/app_theme.dart';
 import '../translations/app_translations.dart';
 import '../login_page.dart';
 import '../services/auth_service.dart';
+import '../services/error_message_service.dart';
 import '../utils/alert_dialog_utils.dart';
+import '../utils/snackbar_utils.dart';
 import '../widgets/user_avatar.dart';
 import '../examples/avatar_test_page.dart';
 import 'settings_page.dart';
+import 'registration_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final AuthService authService;
@@ -19,6 +22,41 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+  @override
+  void initState() {
+    super.initState();
+    widget.authService.addListener(_handleAuthStateChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant ProfilePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.authService != widget.authService) {
+      oldWidget.authService.removeListener(_handleAuthStateChanged);
+      widget.authService.addListener(_handleAuthStateChanged);
+    }
+  }
+
+  void _handleAuthStateChanged() {
+    if (!mounted) return;
+
+    // If user logs out or account is deleted, leave this page immediately.
+    if (!widget.authService.isAuthenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final navigator = Navigator.of(context);
+        if (navigator.canPop()) {
+          navigator.pop();
+        } else {
+          setState(() {});
+        }
+      });
+      return;
+    }
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,11 +199,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     AppTranslations.get('editProfile'),
                     () {
                       // TODO: Create ProfileEditPage
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Profile editing coming soon!'),
-                          backgroundColor: AppTheme.primary,
-                        ),
+                      SnackBarUtils.showInfo(
+                        context,
+                        ErrorMessageService.getComingSoonMessage('profile edit'),
                       );
                       /*
                       Navigator.push(
@@ -200,11 +236,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     Icons.help_outline,
                     AppTranslations.get('helpSupport'),
                     () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Help & Support coming soon!'),
-                          backgroundColor: AppTheme.primary,
-                        ),
+                      SnackBarUtils.showInfo(
+                        context,
+                        ErrorMessageService.getComingSoonMessage('help support'),
                       );
                     },
                   ),
@@ -294,6 +328,39 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
+            // Create Account Button/Link
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 40),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RegistrationPage(authService: widget.authService),
+                    ),
+                  ).then((registrationCompleted) {
+                    // Refresh if registration flow completed (even if user still needs to verify email)
+                    if (registrationCompleted == true) {
+                      setState(() {});
+                    }
+                  });
+                },
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+                child: Text(
+                  AppTranslations.get('createAccount'),
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    decoration: TextDecoration.underline,
+                    decorationColor: Colors.white.withValues(alpha: 0.9),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -332,5 +399,11 @@ class _ProfilePageState extends State<ProfilePage> {
         onTap: onTap,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    widget.authService.removeListener(_handleAuthStateChanged);
+    super.dispose();
   }
 }

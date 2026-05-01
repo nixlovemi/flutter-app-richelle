@@ -4,12 +4,14 @@ import '../models/api_error.dart';
 import '../models/login_request.dart';
 import '../models/registration_request.dart';
 import '../models/registration_response.dart';
+import '../models/delete_account_request.dart';
 import '../models/login_body.dart';
 import '../models/user.dart';
 import '../translations/app_translations.dart';
 import 'api_client.dart';
 import 'token_storage_service.dart';
 import 'google_auth_service.dart';
+import 'error_message_service.dart';
 
 /// Service for handling authentication operations
 class AuthService extends ChangeNotifier {
@@ -73,6 +75,7 @@ class AuthService extends ChangeNotifier {
           firstName: loginData.user.firstName,
           lastName: loginData.user.lastName,
           avatarUrl: loginData.user.avatarUrl,
+          loginMethod: TokenStorageService.loginMethodEmail,
         );
         
         if (kDebugMode) {
@@ -148,6 +151,7 @@ class AuthService extends ChangeNotifier {
           firstName: loginData.user.firstName,
           lastName: loginData.user.lastName,
           avatarUrl: loginData.user.avatarUrl,
+          loginMethod: TokenStorageService.loginMethodGoogle,
         );
         
         if (kDebugMode) {
@@ -178,8 +182,11 @@ class AuthService extends ChangeNotifier {
         // Ignore sign-out errors
       }
       
+      // Use centralized error message service
+      final errorMessage = ErrorMessageService.getErrorMessage(error.toString());
+      
       return ApiResponse.error(
-        ApiError(message: 'Google Sign-In failed: ${error.toString()}'),
+        ApiError(message: errorMessage),
         500,
       );
     } finally {
@@ -248,6 +255,65 @@ class AuthService extends ChangeNotifier {
       _clearAuthenticationState();
       
       return response;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Delete user account permanently
+  /// This action is irreversible and requires password confirmation
+  Future<ApiResponse<bool>> deleteAccount(String password) async {
+    if (!_isAuthenticated) {
+      return ApiResponse.error(
+        ApiError(message: AppTranslations.get('userNotAuthenticated')),
+        401,
+      );
+    }
+
+    _setLoading(true);
+    
+    try {
+      if (kDebugMode) {
+        debugPrint('🔐 AuthService: Attempting to delete user account');
+      }
+      
+      final deleteRequest = DeleteAccountRequest(
+        password: password,
+        confirmation: true,
+      );
+
+      final response = await _apiClient.deleteWithBody(
+        '/user/delete-account',
+        body: deleteRequest.toJson(),
+      );
+
+      if (response.isSuccess) {
+        if (kDebugMode) {
+          debugPrint('🔐 AuthService: Account deletion successful');
+        }
+        
+        // Clear authentication data immediately after successful deletion
+        _clearAuthenticationState();
+        
+        if (kDebugMode) {
+          debugPrint('🔐 AuthService: User logged out after account deletion');
+        }
+      } else {
+        if (kDebugMode) {
+          debugPrint('🚨 AuthService: Account deletion failed: ${response.error?.message}');
+        }
+      }
+
+      return response;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('🚨 AuthService: Account deletion error: $e');
+      }
+      
+      return ApiResponse.error(
+        ApiError(message: ErrorMessageService.getErrorMessage(e.toString())),
+        500,
+      );
     } finally {
       _setLoading(false);
     }

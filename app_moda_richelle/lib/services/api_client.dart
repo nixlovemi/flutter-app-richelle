@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -8,6 +9,7 @@ import '../models/api_error.dart';
 import '../models/api_wrapper.dart';
 import '../translations/app_translations.dart';
 import 'token_storage_service.dart';
+import 'error_message_service.dart';
 
 /// Main API client for handling HTTP requests to the Laravel backend
 /// Uses singleton pattern to ensure consistent authentication across the app
@@ -110,6 +112,12 @@ class ApiClient {
       'Accept': 'application/json',
       'API_KEY': ApiConfig.apiKey,
     };
+  }
+
+  /// Handle network errors consistently using ErrorMessageService
+  ApiResponse<T> _handleNetworkError<T>(dynamic error) {
+    final errorMessage = ErrorMessageService.getErrorMessage(error.toString());
+    return ApiResponse.networkError(errorMessage);
   }
 
   /// Handle HTTP response and convert to ApiResponse for wrapped responses
@@ -216,18 +224,14 @@ class ApiClient {
           .timeout(_timeout);
 
       return _handleResponse<T>(response, fromJson);
-    } on SocketException {
-      return ApiResponse.networkError(
-        AppTranslations.get('noConnection'),
-      );
-    } on HttpException {
-      return ApiResponse.networkError(
-        AppTranslations.get('serverError'),
-      );
+    } on TimeoutException catch (e) {
+      return _handleNetworkError<T>(e);
+    } on SocketException catch (e) {
+      return _handleNetworkError<T>(e);
+    } on HttpException catch (e) {
+      return _handleNetworkError<T>(e);
     } catch (e) {
-      return ApiResponse.networkError(
-        '${AppTranslations.get('networkError')} $e',
-      );
+      return _handleNetworkError<T>(e);
     }
   }
 
@@ -248,18 +252,14 @@ class ApiClient {
           .timeout(_timeout);
 
       return _handleWrappedResponse<T>(response, fromJson);
-    } on SocketException {
-      return ApiResponse.networkError(
-        AppTranslations.get('noConnection'),
-      );
-    } on HttpException {
-      return ApiResponse.networkError(
-        AppTranslations.get('serverError'),
-      );
+    } on TimeoutException catch (e) {
+      return _handleNetworkError<T>(e);
+    } on SocketException catch (e) {
+      return _handleNetworkError<T>(e);
+    } on HttpException catch (e) {
+      return _handleNetworkError<T>(e);
     } catch (e) {
-      return ApiResponse.networkError(
-        '${AppTranslations.get('networkError')} $e',
-      );
+      return _handleNetworkError<T>(e);
     }
   }
 
@@ -280,18 +280,14 @@ class ApiClient {
           .timeout(_timeout);
 
       return _handleResponse<T>(response, fromJson);
-    } on SocketException {
-      return ApiResponse.networkError(
-        AppTranslations.get('noConnection'),
-      );
-    } on HttpException {
-      return ApiResponse.networkError(
-        AppTranslations.get('serverError'),
-      );
+    } on TimeoutException catch (e) {
+      return _handleNetworkError<T>(e);
+    } on SocketException catch (e) {
+      return _handleNetworkError<T>(e);
+    } on HttpException catch (e) {
+      return _handleNetworkError<T>(e);
     } catch (e) {
-      return ApiResponse.networkError(
-        '${AppTranslations.get('networkError')} $e',
-      );
+      return _handleNetworkError<T>(e);
     }
   }
 
@@ -311,18 +307,14 @@ class ApiClient {
           .timeout(_timeout);
 
       return _handleSimpleResponse(response);
-    } on SocketException {
-      return ApiResponse.networkError(
-        AppTranslations.get('noConnection'),
-      );
-    } on HttpException {
-      return ApiResponse.networkError(
-        AppTranslations.get('serverError'),
-      );
+    } on TimeoutException catch (e) {
+      return _handleNetworkError<bool>(e);
+    } on SocketException catch (e) {
+      return _handleNetworkError<bool>(e);
+    } on HttpException catch (e) {
+      return _handleNetworkError<bool>(e);
     } catch (e) {
-      return ApiResponse.networkError(
-        '${AppTranslations.get('networkError')} $e',
-      );
+      return _handleNetworkError<bool>(e);
     }
   }
 
@@ -343,22 +335,18 @@ class ApiClient {
           .timeout(_timeout);
 
       return _handleResponse<T>(response, fromJson);
-    } on SocketException {
-      return ApiResponse.networkError(
-        AppTranslations.get('noConnection'),
-      );
-    } on HttpException {
-      return ApiResponse.networkError(
-        AppTranslations.get('serverError'),
-      );
+    } on TimeoutException catch (e) {
+      return _handleNetworkError<T>(e);
+    } on SocketException catch (e) {
+      return _handleNetworkError<T>(e);
+    } on HttpException catch (e) {
+      return _handleNetworkError<T>(e);
     } catch (e) {
-      return ApiResponse.networkError(
-        '${AppTranslations.get('networkError')} $e',
-      );
+      return _handleNetworkError<T>(e);
     }
   }
 
-  /// Make a DELETE request
+  /// Make a DELETE request with simple boolean response
   Future<ApiResponse<bool>> delete(String endpoint, {bool requireAuth = true}) async {
     try {
       final response = await http
@@ -369,18 +357,43 @@ class ApiClient {
           .timeout(_timeout);
 
       return _handleSimpleResponse(response);
-    } on SocketException {
-      return ApiResponse.networkError(
-        AppTranslations.get('noConnection'),
-      );
-    } on HttpException {
-      return ApiResponse.networkError(
-        AppTranslations.get('serverError'),
-      );
+    } on TimeoutException catch (e) {
+      return _handleNetworkError<bool>(e);
+    } on SocketException catch (e) {
+      return _handleNetworkError<bool>(e);
+    } on HttpException catch (e) {
+      return _handleNetworkError<bool>(e);
     } catch (e) {
-      return ApiResponse.networkError(
-        '${AppTranslations.get('networkError')} $e',
-      );
+      return _handleNetworkError<bool>(e);
+    }
+  }
+
+  /// Make a DELETE request with body and simple boolean response
+  Future<ApiResponse<bool>> deleteWithBody(
+    String endpoint, {
+    Map<String, dynamic>? body,
+    bool requireAuth = true,
+  }) async {
+    try {
+      final request = http.Request('DELETE', Uri.parse('$baseApiUrl$endpoint'));
+      request.headers.addAll(_getHeaders(includeAuth: requireAuth));
+      
+      if (body != null) {
+        request.body = json.encode(body);
+      }
+
+      final streamedResponse = await request.send().timeout(_timeout);
+      final response = await http.Response.fromStream(streamedResponse);
+
+      return _handleSimpleResponse(response);
+    } on TimeoutException catch (e) {
+      return _handleNetworkError<bool>(e);
+    } on SocketException catch (e) {
+      return _handleNetworkError<bool>(e);
+    } on HttpException catch (e) {
+      return _handleNetworkError<bool>(e);
+    } catch (e) {
+      return _handleNetworkError<bool>(e);
     }
   }
 

@@ -19,6 +19,11 @@ class TokenStorageService {
   static const String _userFirstNameKey = 'user_first_name';
   static const String _userLastNameKey = 'user_last_name';
   static const String _userAvatarUrlKey = 'user_avatar_url';
+  static const String _loginMethodKey = 'login_method';
+  
+  /// Login method constants
+  static const String loginMethodEmail = 'email';
+  static const String loginMethodGoogle = 'google';
 
   /// Get the appropriate storage method based on platform
   static Future<void> _writeValue(String key, String value) async {
@@ -100,6 +105,7 @@ class TokenStorageService {
     required String firstName,
     required String lastName,
     String? avatarUrl,
+    String loginMethod = loginMethodEmail,
   }) async {
     try {
       final futures = [
@@ -108,6 +114,7 @@ class TokenStorageService {
         _writeValue(_userEmailKey, email),
         _writeValue(_userFirstNameKey, firstName),
         _writeValue(_userLastNameKey, lastName),
+        _writeValue(_loginMethodKey, loginMethod),
       ];
       
       // Add avatar URL if provided
@@ -122,6 +129,10 @@ class TokenStorageService {
         }
         // Clear avatar URL if not provided
         futures.add(_deleteValue(_userAvatarUrlKey));
+      }
+      
+      if (kDebugMode) {
+        debugPrint('💾 TokenStorageService: Saving login method: $loginMethod');
       }
       
       await Future.wait(futures);
@@ -217,6 +228,23 @@ class TokenStorageService {
     }
   }
 
+  /// Check if user logged in with social auth (Google)
+  static Future<bool> isLoggedInWithSocialAuth() async {
+    try {
+      final loginMethod = await _readValue(_loginMethodKey);
+      final isSocialAuth = loginMethod == loginMethodGoogle;
+      if (kDebugMode) {
+        debugPrint('💾 TokenStorageService: Login method check: ${loginMethod ?? 'null'} (social: $isSocialAuth)');
+      }
+      return isSocialAuth;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('🚨 TokenStorageService: Error checking login method: $e');
+      }
+      return false;
+    }
+  }
+
   /// Clear all stored authentication data
   static Future<void> clearAuthData() async {
     try {
@@ -227,6 +255,7 @@ class TokenStorageService {
         _deleteValue(_userFirstNameKey),
         _deleteValue(_userLastNameKey),
         _deleteValue(_userAvatarUrlKey),
+        _deleteValue(_loginMethodKey),
       ]);
       if (kDebugMode) {
         debugPrint('💾 TokenStorageService: All auth data cleared');
@@ -243,6 +272,22 @@ class TokenStorageService {
     await _writeValue(_tokenKey, newToken);
     if (kDebugMode) {
       debugPrint('💾 TokenStorageService: Token updated');
+    }
+  }
+  
+  /// Get login method (for determining if user has password)
+  static Future<String?> getLoginMethod() async {
+    try {
+      final method = await _readValue(_loginMethodKey);
+      if (kDebugMode) {
+        debugPrint('💾 TokenStorageService: Retrieved login method: ${method ?? 'null'}');
+      }
+      return method;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('🚨 TokenStorageService: Error reading login method: $e');
+      }
+      return null;
     }
   }
 }
