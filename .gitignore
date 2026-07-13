@@ -117,3 +117,8 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+.vscode/
+app_moda_richelle/android/.kotlin/sessions/
+vendor/
+app_moda_richelle/vendor/
+.github/instructions/snyk_rules.instructions.md
