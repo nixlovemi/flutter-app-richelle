@@ -15,7 +15,7 @@ class ApiConfig {
   static const Duration requestTimeout = Duration(seconds: 30);
   
   // Headers
-  static const String apiKey = 'da39a3ee5e6b4b0d3255bfef95601890afd80709'; // TODO: Update with your API key
+  static const String apiKey = ''; // TODO: Update with your API key
   
   /// Get base URL based on current environment and platform
   static String get baseUrl {
